@@ -7,129 +7,131 @@
   <title>Ferrum — Manutenções</title>
 </head>
 <body>
-  <header>
-    <h1>Ferrum</h1>
-    <p>Sistema de Gestão de Ferramentas e Equipamentos</p>
-    <nav aria-label="Navegação principal">
-      <ul>
-        <li><a href="index.html">Dashboard</a></li>
-        <li><a href="equipamentos.html">Equipamentos</a></li>
-        <li><a href="emprestimos.html">Empréstimos</a></li>
-        <li><a href="manutencoes.html" aria-current="page">Manutenções</a></li>
-      </ul>
-    </nav>
-  </header>
+<header>
+  <h1>Ferrum</h1>
+  <p>Sistema de Gestão de Ferramentas e Equipamentos</p>
+  <nav aria-label="Navegação principal">
+    <ul>
+      <li><a href="index.html">Dashboard</a></li>
+      <li><a href="equipamentos.html">Equipamentos</a></li>
+      <li><a href="emprestimos.html">Empréstimos</a></li>
+      <li><a href="manutencoes.html" aria-current="page">Manutenções</a></li>
+    </ul>
+  </nav>
+</header>
 
-  <main>
-    <h2>Manutenções</h2>
+<main>
+  <h2>Manutenções</h2>
 
-    <section aria-labelledby="registrar-manutencao-titulo">
-      <h3 id="registrar-manutencao-titulo">Registrar manutenção</h3>
-      <form action="#" method="post">
-        <fieldset>
-          <legend>Dados da manutenção</legend>
-
-          <p>
-            <label for="equipamento-manutencao">Equipamento</label>
-            <select id="equipamento-manutencao" name="equipamento-manutencao" required>
-              <option value="">Selecione um equipamento</option>
-              <option value="compressor">Compressor de Ar</option>
-              <option value="furadeira">Furadeira de Impacto</option>
-            </select>
-          </p>
-
-          <p>
-            <label for="descricao-problema">Descrição do problema ou serviço</label>
-            <textarea id="descricao-problema" name="descricao-problema" rows="3" required></textarea>
-          </p>
-
-          <p>
-            <label for="data-inicio">Data de início</label>
-            <input type="date" id="data-inicio" name="data-inicio" required>
-          </p>
-
-          <p>
-            <label for="situacao-manutencao">Situação</label>
-            <select id="situacao-manutencao" name="situacao-manutencao" required>
-              <option value="em-andamento">Em andamento</option>
-              <option value="concluida">Concluída</option>
-            </select>
-          </p>
-
-          <p>
-            <label for="observacoes-manutencao">Observações</label>
-            <textarea id="observacoes-manutencao" name="observacoes-manutencao" rows="3"></textarea>
-          </p>
-        </fieldset>
+  <section aria-labelledby="registrar-manutencao-titulo">
+    <h3 id="registrar-manutencao-titulo">Registrar manutenção</h3>
+    <form action="#" method="post">
+      <fieldset>
+        <legend>Dados da manutenção</legend>
 
         <p>
-          <button type="submit">Registrar manutenção</button>
-          <button type="reset">Limpar</button>
+          <label for="equipamento-manutencao">Equipamento</label>
+          <select id="equipamento-manutencao" name="equipamento-manutencao" required>
+            <option value="">Selecione um equipamento</option>
+            <option value="compressor">Compressor de Ar</option>
+            <option value="furadeira">Furadeira de Impacto</option>
+          </select>
         </p>
-      </form>
-    </section>
-
-    <section aria-labelledby="concluir-titulo">
-      <h3 id="concluir-titulo">Concluir manutenção</h3>
-      <form action="#" method="post">
-        <fieldset>
-          <legend>Dados da conclusão</legend>
-
-          <p>
-            <label for="manutencao-concluir">Manutenção em andamento</label>
-            <select id="manutencao-concluir" name="manutencao-concluir" required>
-              <option value="">Selecione uma manutenção</option>
-              <option value="1">Compressor de Ar — iniciada em 22/08/2026</option>
-            </select>
-          </p>
-
-          <p>
-            <label for="data-conclusao">Data de conclusão</label>
-            <input type="date" id="data-conclusao" name="data-conclusao" required>
-          </p>
-        </fieldset>
 
         <p>
-          <button type="submit">Concluir manutenção</button>
+          <label for="descricao-problema">Descrição do problema ou serviço</label>
+          <textarea id="descricao-problema" name="descricao-problema" rows="3" required></textarea>
         </p>
-      </form>
-    </section>
 
-    <section aria-labelledby="historico-manutencao-titulo">
-      <h3 id="historico-manutencao-titulo">Histórico de manutenções</h3>
+        <p>
+          <label for="data-inicio">Data de início</label>
+          <input type="date" id="data-inicio" name="data-inicio" required>
+        </p>
+
+        <p>
+          <label for="situacao-manutencao">Situação</label>
+          <select id="situacao-manutencao" name="situacao-manutencao" required>
+            <option value="em-andamento">Em andamento</option>
+            <option value="concluida">Concluída</option>
+          </select>
+        </p>
+
+        <p>
+          <label for="observacoes-manutencao">Observações</label>
+          <textarea id="observacoes-manutencao" name="observacoes-manutencao" rows="3"></textarea>
+        </p>
+      </fieldset>
+
+      <p>
+        <button type="submit">Registrar manutenção</button>
+        <button type="reset">Limpar</button>
+      </p>
+    </form>
+  </section>
+
+  <section aria-labelledby="concluir-titulo">
+    <h3 id="concluir-titulo">Concluir manutenção</h3>
+    <form action="#" method="post">
+      <fieldset>
+        <legend>Dados da conclusão</legend>
+
+        <p>
+          <label for="manutencao-concluir">Manutenção em andamento</label>
+          <select id="manutencao-concluir" name="manutencao-concluir" required>
+            <option value="">Selecione uma manutenção</option>
+            <option value="1">Compressor de Ar — iniciada em 22/08/2026</option>
+          </select>
+        </p>
+
+        <p>
+          <label for="data-conclusao">Data de conclusão</label>
+          <input type="date" id="data-conclusao" name="data-conclusao" required>
+        </p>
+      </fieldset>
+
+      <p>
+        <button type="submit">Concluir manutenção</button>
+      </p>
+    </form>
+  </section>
+
+  <section aria-labelledby="historico-manutencao-titulo">
+    <h3 id="historico-manutencao-titulo">Histórico de manutenções</h3>
+    <div class="table-responsive">
       <table>
         <caption>Manutenções registradas e sua situação</caption>
         <thead>
-          <tr>
-            <th scope="col">Equipamento</th>
-            <th scope="col">Descrição</th>
-            <th scope="col">Data de início</th>
-            <th scope="col">Data de conclusão</th>
-            <th scope="col">Situação</th>
-          </tr>
+        <tr>
+          <th scope="col">Equipamento</th>
+          <th scope="col">Descrição</th>
+          <th scope="col">Data de início</th>
+          <th scope="col">Data de conclusão</th>
+          <th scope="col">Situação</th>
+        </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Compressor de Ar</td>
-            <td>Vazamento no reservatório</td>
-            <td>22/08/2026</td>
-            <td>—</td>
-            <td>Em andamento</td>
-          </tr>
-          <tr>
-            <td>Furadeira de Impacto</td>
-            <td>Troca de escovas do motor</td>
-            <td>10/08/2026</td>
-            <td>15/08/2026</td>
-            <td>Concluída</td>
-          </tr>
+        <tr>
+          <td data-label="Equipamento">Compressor de Ar</td>
+          <td data-label="Descrição">Vazamento no reservatório</td>
+          <td data-label="Data de início">22/08/2026</td>
+          <td data-label="Data de conclusão">—</td>
+          <td data-label="Situação">Em andamento</td>
+        </tr>
+        <tr>
+          <td data-label="Equipamento">Furadeira de Impacto</td>
+          <td data-label="Descrição">Troca de escovas do motor</td>
+          <td data-label="Data de início">10/08/2026</td>
+          <td data-label="Data de conclusão">15/08/2026</td>
+          <td data-label="Situação">Concluída</td>
+        </tr>
         </tbody>
       </table>
-    </section>
-  </main>
+    </div>
+  </section>
+</main>
 
-  <footer>
-    <p>&copy; 2026 Ferrum</p>
-  </footer>
+<footer>
+  <p>&copy; 2026 Ferrum</p>
+</footer>
 </body>
 </html>
