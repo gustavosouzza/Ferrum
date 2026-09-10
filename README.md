@@ -10,7 +10,24 @@ A aplicação tem como objetivo centralizar informações sobre os equipamentos 
 
 O sistema permitirá controlar quais ferramentas estão disponíveis, emprestadas ou em manutenção, além de registrar os responsáveis pelos empréstimos e as movimentações relacionadas aos equipamentos.
 
-O projeto será desenvolvido de forma incremental ao longo da disciplina **Tecnologia de Construção de Software I**.
+O projeto está sendo desenvolvido de forma incremental ao longo da disciplina **Tecnologia de Construção de Software I**.
+
+## Status atual do projeto
+
+| Etapa | Objetivo | Situação |
+|---|---|---|
+| 01 | Proposta e especificação | ✅ Concluída |
+| 02 | Protótipo estrutural com HTML semântico | ✅ Concluída |
+| 03 | Interface responsiva com CSS | ✅ Concluída |
+| 04 | Interatividade com JavaScript | ⏳ Pendente |
+| 05 | Modularização e comunicação assíncrona | ⏳ Pendente |
+| 06 | API REST com Java e Spring Boot | ⏳ Pendente |
+| 07 | Persistência e CRUD com banco de dados | ⏳ Pendente |
+| 08 | Organização arquitetural | ⏳ Pendente |
+| 09 | Evolução do front-end | ⏳ Pendente |
+| 10 | Qualidade, versionamento e release candidate | ⏳ Pendente |
+
+Até o momento, o projeto possui uma interface Web estática (HTML semântico + CSS responsivo), sem lógica de aplicação, backend, API ou persistência em banco de dados — o que é esperado para esta fase do desenvolvimento.
 
 ## Problema
 
@@ -33,51 +50,27 @@ Permitir que usuários responsáveis pelo controle de ferramentas e equipamentos
 
 A aplicação também deverá disponibilizar informações que facilitem a identificação da situação atual dos equipamentos e seu histórico.
 
-## Principais funcionalidades
+## Funcionalidades
 
-### Ferramentas e equipamentos
+### Implementadas (nível de interface, Etapas 02 e 03)
 
-- Cadastro de ferramentas e equipamentos;
-- Consulta de ferramentas e equipamentos;
-- Edição de equipamentos;
-- Exclusão de equipamentos;
-- Filtro por categoria;
-- Consulta da situação atual do equipamento.
+As telas abaixo já existem como estrutura HTML semântica, estilizada e responsiva, com dados estáticos de demonstração — ainda sem lógica funcional, backend ou persistência:
 
-### Empréstimos
+- navegação entre as 4 páginas do sistema;
+- formulário de cadastro de equipamento (nome, identificação, descrição, categoria, situação);
+- formulário de filtro de equipamentos por categoria e situação;
+- listagem de equipamentos cadastrados, com ações de editar e excluir;
+- formulário de registro de empréstimo e de devolução, com histórico de empréstimos;
+- formulário de registro e conclusão de manutenção, com histórico de manutenções;
+- dashboard com indicadores gerais (total de equipamentos, disponíveis, emprestados, em manutenção) e movimentações recentes.
 
-- Registro de empréstimos;
-- Consulta de empréstimos;
-- Identificação do responsável pelo empréstimo;
-- Registro da data do empréstimo;
-- Registro da previsão de devolução;
-- Controle de equipamentos atualmente emprestados.
+### Planejadas (próximas etapas)
 
-### Devoluções
-
-- Registro de devolução;
-- Consulta do histórico de devoluções;
-- Identificação de empréstimos pendentes;
-- Controle da situação do equipamento após a devolução.
-
-### Manutenção
-
-- Registro de manutenção;
-- Consulta do histórico de manutenção;
-- Identificação de equipamentos em manutenção;
-- Registro do motivo da manutenção;
-- Registro da conclusão da manutenção.
-
-### Dashboard
-
-O sistema poderá apresentar uma visão geral contendo:
-
-- quantidade total de equipamentos;
-- equipamentos disponíveis;
-- equipamentos emprestados;
-- equipamentos em manutenção;
-- empréstimos pendentes;
-- movimentações recentes.
+- Cadastro e consulta de categorias;
+- Interatividade real via JavaScript (Etapa 04);
+- Comunicação assíncrona com o servidor (Etapa 05);
+- API REST em Java/Spring Boot (Etapa 06);
+- Persistência em banco de dados relacional (Etapa 07).
 
 ## Regras de negócio
 
@@ -123,61 +116,16 @@ Usuário
 - **Devolução** — registro da devolução de um equipamento emprestado.
 - **Manutenção** — registro das intervenções realizadas em um equipamento.
 
-## Interfaces previstas
+## Interfaces
 
-### Dashboard
-
-Tela principal da aplicação, apresentando uma visão geral da situação dos equipamentos.
-
-Deverá apresentar, inicialmente:
-
-- quantidade total de equipamentos;
-- equipamentos disponíveis;
-- equipamentos emprestados;
-- equipamentos em manutenção;
-- empréstimos pendentes;
-- movimentações recentes.
-
-### Equipamentos
-
-Tela destinada ao cadastro e consulta dos equipamentos.
-
-Deverá permitir:
-
-- cadastro;
-- consulta;
-- edição;
-- exclusão;
-- filtragem;
-- visualização da situação atual.
-
-### Empréstimos
-
-Tela destinada ao controle dos empréstimos.
-
-Deverá permitir:
-
-- registrar empréstimo;
-- consultar empréstimos;
-- filtrar empréstimos;
-- visualizar responsável;
-- visualizar datas;
-- registrar devolução.
-
-### Manutenções
-
-Tela destinada ao controle das manutenções.
-
-Deverá permitir:
-
-- registrar manutenção;
-- consultar histórico;
-- visualizar equipamentos em manutenção;
-- registrar conclusão da manutenção.
+| Página | Arquivo | Descrição |
+|---|---|---|
+| Dashboard | `client/index.html` | Visão geral: resumo dos equipamentos, empréstimos pendentes e movimentações recentes. |
+| Equipamentos | `client/equipamentos.html` | Cadastro, filtro e listagem de equipamentos. |
+| Empréstimos | `client/emprestimos.html` | Registro de empréstimo, registro de devolução e histórico. |
+| Manutenções | `client/manutencoes.html` | Registro e conclusão de manutenção, e histórico. |
 
 ## Operações previstas
-
-As principais operações da aplicação serão:
 
 1. Cadastrar equipamento.
 2. Consultar equipamentos.
@@ -194,21 +142,21 @@ As principais operações da aplicação serão:
 
 As operações de empréstimo, devolução e manutenção deverão refletir na situação atual do equipamento.
 
-## Tecnologias pretendidas
+## Tecnologias
 
 ### Cliente
 
-Tecnologias inicialmente previstas:
+Utilizadas até o momento:
 
-- HTML5;
-- CSS3;
-- JavaScript.
+- HTML5 (estrutura semântica — Etapa 02);
+- CSS3, com Flexbox, Grid e media queries (responsividade — Etapa 03).
 
-A utilização de um framework de front-end poderá ser avaliada durante as etapas posteriores.
+Previstas para etapas futuras:
 
-### Servidor
+- JavaScript (interatividade, Etapa 04);
+- possível framework de front-end, a avaliar.
 
-Tecnologias inicialmente previstas:
+### Servidor (planejado)
 
 - Java;
 - Spring Boot;
@@ -218,21 +166,19 @@ Tecnologias inicialmente previstas:
 - JSON;
 - Maven.
 
-### Persistência
+### Persistência (planejada)
 
-Será utilizado um banco de dados relacional.
-
-Inicialmente, está prevista a utilização do **PostgreSQL**, podendo essa decisão ser alterada durante o desenvolvimento.
+Será utilizado um banco de dados relacional. Inicialmente está prevista a utilização do **PostgreSQL**, podendo essa decisão ser alterada durante o desenvolvimento.
 
 ### Outras ferramentas
 
 - Git;
 - GitHub;
-- Docker.
+- Docker (planejado).
 
-## Arquitetura inicial
+## Arquitetura
 
-A visão inicial da aplicação é:
+A visão inicial da aplicação, a ser implementada nas próximas etapas:
 
 ```text
 ┌───────────────────────┐
@@ -272,28 +218,42 @@ A visão inicial da aplicação é:
 └───────────────────────┘
 ```
 
-A arquitetura será refinada conforme o projeto evoluir.
+Atualmente apenas a camada de front-end (HTML + CSS) está implementada. A arquitetura será refinada conforme o projeto evoluir.
 
-## Estrutura prevista do projeto
-
-A estrutura poderá evoluir ao longo das etapas. Inicialmente, será adotada uma organização semelhante a:
+## Estrutura do projeto
 
 ```text
-ferrum/
-│
-├── docs/
-│   └── proposta.md
-│
-├── client/
-│
-├── server/
+Ferrum/
 │
 ├── README.md
+├── .gitignore
 │
-└── .gitignore
+├── client/
+│   ├── index.html
+│   ├── equipamentos.html
+│   ├── emprestimos.html
+│   ├── manutencoes.html
+│   └── css/
+│       └── style.css
+│
+├── docs/
+│   ├── proposta.md
+│   ├── etapa-02.md
+│   ├── etapa-03.md
+│   └── evidencias/
+│       └── etapa-03/
+│           ├── desktop-tela-01.png
+│           ├── desktop-tela-02.png
+│           ├── desktop-tela-03.png
+│           ├── tablet-tela-01.png
+│           ├── tablet-tela-02.png
+│           ├── tablet-tela-03.png
+│           ├── smartphone-tela-01.png
+│           ├── smartphone-tela-02.png
+│           └── smartphone-tela-03.png
+│
+└── server/          (a ser criado nas próximas etapas)
 ```
-
-A estrutura definitiva será definida conforme as tecnologias e decisões arquiteturais adotadas durante o desenvolvimento.
 
 ## Escopo inicial
 
@@ -325,35 +285,14 @@ A estrutura definitiva será definida conforme as tecnologias e decisões arquit
 
 Essas funcionalidades poderão ser consideradas futuramente, mas não fazem parte do escopo inicial.
 
-## Desenvolvimento por etapas
-
-O projeto será desenvolvido incrementalmente.
-
-| Etapa | Objetivo |
-|---|---|
-| 01 | Proposta e especificação |
-| 02 | Protótipo estrutural com HTML semântico |
-| 03 | Interface responsiva com CSS |
-| 04 | Interatividade com JavaScript |
-| 05 | Modularização e comunicação assíncrona |
-| 06 | API REST com Java e Spring Boot |
-| 07 | Persistência e CRUD com banco de dados |
-| 08 | Organização arquitetural |
-| 09 | Evolução do front-end |
-| 10 | Qualidade, versionamento e release candidate |
-
-Cada etapa deverá representar uma evolução do mesmo projeto.
-
 ## Versionamento
 
-O projeto utilizará Git durante todo o desenvolvimento.
-
-As versões das etapas serão identificadas por tags:
+O projeto utiliza Git durante todo o desenvolvimento. As versões das etapas são identificadas por tags:
 
 ```text
-etapa-01
-etapa-02
-etapa-03
+etapa-01  ✅
+etapa-02  ✅
+etapa-03  ✅
 etapa-04
 etapa-05
 etapa-06
@@ -366,27 +305,29 @@ final
 
 ## Documentação
 
-A documentação do projeto será mantida no diretório:
+A documentação do projeto é mantida no diretório `/docs`:
 
-```text
-/docs
-```
+- [`docs/proposta.md`](docs/proposta.md) — proposta e especificação inicial (Etapa 01);
+- [`docs/etapa-02.md`](docs/etapa-02.md) — páginas criadas, funcionalidades e decisões de estrutura HTML (Etapa 02);
+- [`docs/etapa-03.md`](docs/etapa-03.md) — decisões de responsividade, breakpoints e evidências (Etapa 03);
+- [`docs/evidencias/etapa-03/`](docs/evidencias/etapa-03/) — capturas de tela em desktop, tablet e smartphone.
 
-A documentação inicial inclui:
-
-```text
-/docs/proposta.md
-```
-
-Novos documentos serão adicionados conforme as etapas do projeto forem concluídas.
+Novos documentos serão adicionados conforme as próximas etapas forem concluídas.
 
 ## Execução
 
-As instruções de instalação e execução serão adicionadas e atualizadas conforme as tecnologias forem implementadas.
+O projeto ainda é um front-end estático (HTML + CSS puro), sem dependências de instalação.
 
-A versão inicial do projeto ainda não possui uma aplicação executável completa.
+Para visualizar localmente:
 
-Quando o front-end e o back-end forem implementados, esta seção deverá conter:
+```bash
+cd client
+python3 -m http.server 8000
+```
+
+Depois, acesse `http://localhost:8000/index.html` no navegador e navegue entre as páginas pelo menu superior. Para conferir a responsividade, use o modo de dispositivo das ferramentas de desenvolvedor do navegador nos tamanhos 1440×900 (desktop), 768×1024 (tablet) e 390×844 (smartphone).
+
+Quando o back-end for implementado, esta seção será atualizada com:
 
 1. pré-requisitos;
 2. instalação das dependências;
@@ -398,9 +339,7 @@ Quando o front-end e o back-end forem implementados, esta seção deverá conter
 
 ## Testes
 
-Os procedimentos e evidências de testes serão documentados conforme as funcionalidades forem implementadas.
-
-A aplicação deverá evoluir para possuir mecanismos que permitam verificar principalmente:
+Os procedimentos e evidências de testes serão documentados conforme as funcionalidades forem implementadas. A aplicação deverá evoluir para possuir mecanismos que permitam verificar principalmente:
 
 - validação dos empréstimos;
 - validação das devoluções;
@@ -410,16 +349,15 @@ A aplicação deverá evoluir para possuir mecanismos que permitam verificar pri
 - persistência;
 - integração entre front-end e back-end.
 
-## Decisões e limitações
+## Decisões e limitações conhecidas
 
-Algumas decisões ainda poderão ser refinadas durante o desenvolvimento, incluindo:
+Algumas decisões ainda serão refinadas durante o desenvolvimento, incluindo:
 
-- tecnologia definitiva do front-end;
+- tecnologia definitiva do front-end (uso ou não de framework);
 - estrutura definitiva do banco de dados;
 - estratégia de autenticação;
 - mecanismo de identificação dos equipamentos;
 - arquitetura definitiva do servidor;
 - estratégia de notificações.
 
-Essas decisões deverão ser registradas na documentação do projeto conforme forem tomadas.
-
+Essas decisões serão registradas na documentação do projeto conforme forem tomadas.
