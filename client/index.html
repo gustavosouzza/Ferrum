@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferrum — Dashboard</title>
+</head>
+<body>
+  <header>
+    <h1>Ferrum</h1>
+    <p>Sistema de Gestão de Ferramentas e Equipamentos</p>
+    <nav aria-label="Navegação principal">
+      <ul>
+        <li><a href="index.html" aria-current="page">Dashboard</a></li>
+        <li><a href="equipamentos.html">Equipamentos</a></li>
+        <li><a href="emprestimos.html">Empréstimos</a></li>
+        <li><a href="manutencoes.html">Manutenções</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Visão geral</h2>
+
+    <section aria-labelledby="resumo-titulo">
+      <h3 id="resumo-titulo">Resumo dos equipamentos</h3>
+      <dl>
+        <div>
+          <dt>Total de equipamentos</dt>
+          <dd>48</dd>
+        </div>
+        <div>
+          <dt>Disponíveis</dt>
+          <dd>31</dd>
+        </div>
+        <div>
+          <dt>Emprestados</dt>
+          <dd>12</dd>
+        </div>
+        <div>
+          <dt>Em manutenção</dt>
+          <dd>5</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="pendentes-titulo">
+      <h3 id="pendentes-titulo">Empréstimos pendentes</h3>
+      <table>
+        <caption>Empréstimos com devolução prevista ainda não realizada</caption>
+        <thead>
+          <tr>
+            <th scope="col">Equipamento</th>
+            <th scope="col">Responsável</th>
+            <th scope="col">Data do empréstimo</th>
+            <th scope="col">Previsão de devolução</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Furadeira de Impacto</td>
+            <td>Carlos Silva</td>
+            <td>25/08/2026</td>
+            <td>05/09/2026</td>
+          </tr>
+          <tr>
+            <td>Multímetro Digital</td>
+            <td>Ana Pereira</td>
+            <td>28/08/2026</td>
+            <td>02/09/2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="movimentacoes-titulo">
+      <h3 id="movimentacoes-titulo">Movimentações recentes</h3>
+      <ol>
+        <li>Empréstimo registrado — Furadeira de Impacto — 25/08/2026</li>
+        <li>Devolução registrada — Chave de Torque — 24/08/2026</li>
+        <li>Manutenção iniciada — Compressor de Ar — 22/08/2026</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Ferrum</p>
+  </footer>
+</body>
+</html>

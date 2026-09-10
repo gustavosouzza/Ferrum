@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferrum — Equipamentos</title>
+</head>
+<body>
+  <header>
+    <h1>Ferrum</h1>
+    <p>Sistema de Gestão de Ferramentas e Equipamentos</p>
+    <nav aria-label="Navegação principal">
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="equipamentos.html" aria-current="page">Equipamentos</a></li>
+        <li><a href="emprestimos.html">Empréstimos</a></li>
+        <li><a href="manutencoes.html">Manutenções</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Equipamentos</h2>
+
+    <section aria-labelledby="cadastro-titulo">
+      <h3 id="cadastro-titulo">Cadastrar equipamento</h3>
+      <form action="#" method="post">
+        <fieldset>
+          <legend>Dados do equipamento</legend>
+
+          <p>
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome" required>
+          </p>
+
+          <p>
+            <label for="identificacao">Identificação (patrimônio)</label>
+            <input type="text" id="identificacao" name="identificacao" required>
+          </p>
+
+          <p>
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" rows="3"></textarea>
+          </p>
+
+          <p>
+            <label for="categoria">Categoria</label>
+            <select id="categoria" name="categoria" required>
+              <option value="">Selecione uma categoria</option>
+              <option value="ferramenta-manual">Ferramenta manual</option>
+              <option value="ferramenta-eletrica">Ferramenta elétrica</option>
+              <option value="equipamento-medicao">Equipamento de medição</option>
+              <option value="equipamento-seguranca">Equipamento de segurança</option>
+            </select>
+          </p>
+
+          <p>
+            <label for="situacao">Situação</label>
+            <select id="situacao" name="situacao" required>
+              <option value="disponivel">Disponível</option>
+              <option value="emprestado">Emprestado</option>
+              <option value="manutencao">Em manutenção</option>
+            </select>
+          </p>
+        </fieldset>
+
+        <p>
+          <button type="submit">Cadastrar equipamento</button>
+          <button type="reset">Limpar</button>
+        </p>
+      </form>
+    </section>
+
+    <section aria-labelledby="filtro-titulo">
+      <h3 id="filtro-titulo">Filtrar equipamentos</h3>
+      <form action="#" method="get">
+        <p>
+          <label for="filtro-categoria">Categoria</label>
+          <select id="filtro-categoria" name="filtro-categoria">
+            <option value="">Todas</option>
+            <option value="ferramenta-manual">Ferramenta manual</option>
+            <option value="ferramenta-eletrica">Ferramenta elétrica</option>
+            <option value="equipamento-medicao">Equipamento de medição</option>
+            <option value="equipamento-seguranca">Equipamento de segurança</option>
+          </select>
+        </p>
+        <p>
+          <label for="filtro-situacao">Situação</label>
+          <select id="filtro-situacao" name="filtro-situacao">
+            <option value="">Todas</option>
+            <option value="disponivel">Disponível</option>
+            <option value="emprestado">Emprestado</option>
+            <option value="manutencao">Em manutenção</option>
+          </select>
+        </p>
+        <p>
+          <button type="submit">Filtrar</button>
+        </p>
+      </form>
+    </section>
+
+    <section aria-labelledby="lista-titulo">
+      <h3 id="lista-titulo">Equipamentos cadastrados</h3>
+      <table>
+        <caption>Lista de equipamentos e sua situação atual</caption>
+        <thead>
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Categoria</th>
+            <th scope="col">Situação</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Furadeira de Impacto</td>
+            <td>Ferramenta elétrica</td>
+            <td>Emprestado</td>
+            <td>
+              <a href="#">Editar</a> |
+              <a href="#">Excluir</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Multímetro Digital</td>
+            <td>Equipamento de medição</td>
+            <td>Emprestado</td>
+            <td>
+              <a href="#">Editar</a> |
+              <a href="#">Excluir</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Compressor de Ar</td>
+            <td>Ferramenta elétrica</td>
+            <td>Em manutenção</td>
+            <td>
+              <a href="#">Editar</a> |
+              <a href="#">Excluir</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Chave de Torque</td>
+            <td>Ferramenta manual</td>
+            <td>Disponível</td>
+            <td>
+              <a href="#">Editar</a> |
+              <a href="#">Excluir</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Ferrum</p>
+  </footer>
+</body>
+</html>
