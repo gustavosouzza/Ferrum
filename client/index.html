@@ -28,25 +28,26 @@
     <dl class="stats-grid">
       <div>
         <dt>Total de equipamentos</dt>
-        <dd>48</dd>
+        <dd id="stat-total">—</dd>
       </div>
       <div>
         <dt>Disponíveis</dt>
-        <dd>31</dd>
+        <dd id="stat-disponiveis">—</dd>
       </div>
       <div>
         <dt>Emprestados</dt>
-        <dd>12</dd>
+        <dd id="stat-emprestados">—</dd>
       </div>
       <div>
         <dt>Em manutenção</dt>
-        <dd>5</dd>
+        <dd id="stat-manutencao">—</dd>
       </div>
     </dl>
   </section>
 
   <section aria-labelledby="pendentes-titulo">
     <h3 id="pendentes-titulo">Empréstimos pendentes</h3>
+    <p id="pendentes-vazio" hidden>Não há empréstimos pendentes no momento.</p>
     <div class="table-responsive">
       <table>
         <caption>Empréstimos com devolução prevista ainda não realizada</caption>
@@ -58,19 +59,7 @@
           <th scope="col">Previsão de devolução</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-          <td data-label="Equipamento">Furadeira de Impacto</td>
-          <td data-label="Responsável">Carlos Silva</td>
-          <td data-label="Data do empréstimo">25/08/2026</td>
-          <td data-label="Previsão de devolução">05/09/2026</td>
-        </tr>
-        <tr>
-          <td data-label="Equipamento">Multímetro Digital</td>
-          <td data-label="Responsável">Ana Pereira</td>
-          <td data-label="Data do empréstimo">28/08/2026</td>
-          <td data-label="Previsão de devolução">02/09/2026</td>
-        </tr>
+        <tbody id="tabela-pendentes">
         </tbody>
       </table>
     </div>
@@ -78,10 +67,7 @@
 
   <section aria-labelledby="movimentacoes-titulo">
     <h3 id="movimentacoes-titulo">Movimentações recentes</h3>
-    <ol>
-      <li>Empréstimo registrado — Furadeira de Impacto — 25/08/2026</li>
-      <li>Devolução registrada — Chave de Torque — 24/08/2026</li>
-      <li>Manutenção iniciada — Compressor de Ar — 22/08/2026</li>
+    <ol id="lista-movimentacoes">
     </ol>
   </section>
 </main>
@@ -89,5 +75,8 @@
 <footer>
   <p>&copy; 2026 Ferrum</p>
 </footer>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/dashboard.js"></script>
 </body>
 </html>

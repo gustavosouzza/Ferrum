@@ -19,7 +19,7 @@ O projeto está sendo desenvolvido de forma incremental ao longo da disciplina *
 | 01 | Proposta e especificação | ✅ Concluída |
 | 02 | Protótipo estrutural com HTML semântico | ✅ Concluída |
 | 03 | Interface responsiva com CSS | ✅ Concluída |
-| 04 | Interatividade com JavaScript | ⏳ Pendente |
+| 04 | Interatividade com JavaScript | ✅ Concluída |
 | 05 | Modularização e comunicação assíncrona | ⏳ Pendente |
 | 06 | API REST com Java e Spring Boot | ⏳ Pendente |
 | 07 | Persistência e CRUD com banco de dados | ⏳ Pendente |
@@ -27,7 +27,7 @@ O projeto está sendo desenvolvido de forma incremental ao longo da disciplina *
 | 09 | Evolução do front-end | ⏳ Pendente |
 | 10 | Qualidade, versionamento e release candidate | ⏳ Pendente |
 
-Até o momento, o projeto possui uma interface Web estática (HTML semântico + CSS responsivo), sem lógica de aplicação, backend, API ou persistência em banco de dados — o que é esperado para esta fase do desenvolvimento.
+Até o momento, o projeto é um front-end interativo (HTML semântico + CSS responsivo + JavaScript), com os dados mantidos no `localStorage` do navegador. Ainda não há back-end, API nem banco de dados — isso é esperado para esta fase do desenvolvimento e está previsto para as Etapas 06/07.
 
 ## Problema
 
@@ -52,25 +52,23 @@ A aplicação também deverá disponibilizar informações que facilitem a ident
 
 ## Funcionalidades
 
-### Implementadas (nível de interface, Etapas 02 e 03)
+### Implementadas (Etapas 02, 03 e 04)
 
-As telas abaixo já existem como estrutura HTML semântica, estilizada e responsiva, com dados estáticos de demonstração — ainda sem lógica funcional, backend ou persistência:
+As telas abaixo têm estrutura HTML semântica, estilo responsivo e agora interatividade real em JavaScript, com os dados persistidos no `localStorage` do navegador (ver [`docs/etapa-04.md`](docs/etapa-04.md) para o detalhamento completo):
 
 - navegação entre as 4 páginas do sistema;
-- formulário de cadastro de equipamento (nome, identificação, descrição, categoria, situação);
-- formulário de filtro de equipamentos por categoria e situação;
-- listagem de equipamentos cadastrados, com ações de editar e excluir;
-- formulário de registro de empréstimo e de devolução, com histórico de empréstimos;
-- formulário de registro e conclusão de manutenção, com histórico de manutenções;
-- dashboard com indicadores gerais (total de equipamentos, disponíveis, emprestados, em manutenção) e movimentações recentes.
+- cadastro, edição e exclusão de equipamentos, com validação de campos e bloqueio de exclusão para equipamentos emprestados/em manutenção;
+- filtro dinâmico de equipamentos por categoria e situação, sem recarregar a página;
+- registro de empréstimo e de devolução, com regras de disponibilidade e validação de datas;
+- registro e conclusão de manutenção, com histórico;
+- dashboard com indicadores calculados em tempo real (total, disponíveis, emprestados, em manutenção), lista de empréstimos pendentes (com destaque para atrasados) e movimentações recentes.
 
 ### Planejadas (próximas etapas)
 
-- Cadastro e consulta de categorias;
-- Interatividade real via JavaScript (Etapa 04);
-- Comunicação assíncrona com o servidor (Etapa 05);
+- Cadastro e consulta de categorias como entidade própria;
+- Modularização do JavaScript e comunicação assíncrona (Etapa 05);
 - API REST em Java/Spring Boot (Etapa 06);
-- Persistência em banco de dados relacional (Etapa 07).
+- Persistência em banco de dados relacional, substituindo o `localStorage` (Etapa 07).
 
 ## Regras de negócio
 
@@ -149,11 +147,12 @@ As operações de empréstimo, devolução e manutenção deverão refletir na s
 Utilizadas até o momento:
 
 - HTML5 (estrutura semântica — Etapa 02);
-- CSS3, com Flexbox, Grid e media queries (responsividade — Etapa 03).
+- CSS3, com Flexbox, Grid e media queries (responsividade — Etapa 03);
+- JavaScript (ES6+), sem frameworks, com persistência de dados via `localStorage` (interatividade — Etapa 04).
 
 Previstas para etapas futuras:
 
-- JavaScript (interatividade, Etapa 04);
+- modularização do JavaScript com `import`/`export` (Etapa 05);
 - possível framework de front-end, a avaliar.
 
 ### Servidor (planejado)
@@ -218,7 +217,7 @@ A visão inicial da aplicação, a ser implementada nas próximas etapas:
 └───────────────────────┘
 ```
 
-Atualmente apenas a camada de front-end (HTML + CSS) está implementada. A arquitetura será refinada conforme o projeto evoluir.
+Atualmente apenas a camada de front-end (HTML + CSS + JavaScript rodando no navegador, com `localStorage` no lugar do banco de dados) está implementada. A arquitetura será refinada conforme o projeto evoluir.
 
 ## Estrutura do projeto
 
@@ -233,24 +232,34 @@ Ferrum/
 │   ├── equipamentos.html
 │   ├── emprestimos.html
 │   ├── manutencoes.html
-│   └── css/
-│       └── style.css
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       ├── store.js
+│       ├── ui.js
+│       ├── dashboard.js
+│       ├── equipamentos.js
+│       ├── emprestimos.js
+│       └── manutencoes.js
 │
 ├── docs/
 │   ├── proposta.md
 │   ├── etapa-02.md
 │   ├── etapa-03.md
+│   ├── etapa-04.md
 │   └── evidencias/
-│       └── etapa-03/
-│           ├── desktop-tela-01.png
-│           ├── desktop-tela-02.png
-│           ├── desktop-tela-03.png
-│           ├── tablet-tela-01.png
-│           ├── tablet-tela-02.png
-│           ├── tablet-tela-03.png
-│           ├── smartphone-tela-01.png
-│           ├── smartphone-tela-02.png
-│           └── smartphone-tela-03.png
+│       ├── etapa-03/
+│       │   ├── desktop-tela-01.png
+│       │   ├── desktop-tela-02.png
+│       │   ├── desktop-tela-03.png
+│       │   ├── tablet-tela-01.png
+│       │   ├── tablet-tela-02.png
+│       │   ├── tablet-tela-03.png
+│       │   ├── smartphone-tela-01.png
+│       │   ├── smartphone-tela-02.png
+│       │   └── smartphone-tela-03.png
+│       └── etapa-04/
+│           └── (capturas de tela das funcionalidades interativas — ver docs/etapa-04.md)
 │
 └── server/          (a ser criado nas próximas etapas)
 ```
@@ -293,7 +302,7 @@ O projeto utiliza Git durante todo o desenvolvimento. As versões das etapas sã
 etapa-01  ✅
 etapa-02  ✅
 etapa-03  ✅
-etapa-04
+etapa-04  ✅
 etapa-05
 etapa-06
 etapa-07
@@ -310,13 +319,15 @@ A documentação do projeto é mantida no diretório `/docs`:
 - [`docs/proposta.md`](docs/proposta.md) — proposta e especificação inicial (Etapa 01);
 - [`docs/etapa-02.md`](docs/etapa-02.md) — páginas criadas, funcionalidades e decisões de estrutura HTML (Etapa 02);
 - [`docs/etapa-03.md`](docs/etapa-03.md) — decisões de responsividade, breakpoints e evidências (Etapa 03);
-- [`docs/evidencias/etapa-03/`](docs/evidencias/etapa-03/) — capturas de tela em desktop, tablet e smartphone.
+- [`docs/etapa-04.md`](docs/etapa-04.md) — funcionalidades interativas, validações, matriz de evidências e instruções de teste (Etapa 04);
+- [`docs/evidencias/etapa-03/`](docs/evidencias/etapa-03/) — capturas de tela em desktop, tablet e smartphone;
+- [`docs/evidencias/etapa-04/`](docs/evidencias/etapa-04/) — capturas de tela das funcionalidades interativas.
 
 Novos documentos serão adicionados conforme as próximas etapas forem concluídas.
 
 ## Execução
 
-O projeto ainda é um front-end estático (HTML + CSS puro), sem dependências de instalação.
+O projeto é um front-end estático servido como arquivos HTML/CSS/JS puros (sem build, sem dependências de instalação). Os dados (equipamentos, empréstimos e manutenções) são mantidos no `localStorage` do navegador — não há servidor de dados ainda.
 
 Para visualizar localmente:
 
@@ -325,7 +336,7 @@ cd client
 python3 -m http.server 8000
 ```
 
-Depois, acesse `http://localhost:8000/index.html` no navegador e navegue entre as páginas pelo menu superior. Para conferir a responsividade, use o modo de dispositivo das ferramentas de desenvolvedor do navegador nos tamanhos 1440×900 (desktop), 768×1024 (tablet) e 390×844 (smartphone).
+Depois, acesse `http://localhost:8000/index.html` no navegador e navegue entre as páginas pelo menu superior. Para conferir a responsividade, use o modo de dispositivo das ferramentas de desenvolvedor do navegador nos tamanhos 1440×900 (desktop), 768×1024 (tablet) e 390×844 (smartphone). Para testar as funcionalidades interativas (cadastro, filtro, empréstimo, devolução, manutenção), siga o roteiro em [`docs/etapa-04.md`](docs/etapa-04.md#instruções-para-testar-as-funcionalidades). Para reiniciar os dados de demonstração, execute `localStorage.removeItem("ferrum-db-v1")` no console do navegador e recarregue a página.
 
 Quando o back-end for implementado, esta seção será atualizada com:
 

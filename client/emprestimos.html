@@ -25,7 +25,9 @@
 
   <section aria-labelledby="registrar-titulo">
     <h3 id="registrar-titulo">Registrar empréstimo</h3>
-    <form action="#" method="post">
+    <p class="alerta" data-alerta hidden></p>
+    <p id="sem-equipamentos-disponiveis" hidden>Não há equipamentos disponíveis para empréstimo no momento.</p>
+    <form id="form-emprestimo" novalidate>
       <fieldset>
         <legend>Dados do empréstimo</legend>
 
@@ -33,25 +35,26 @@
           <label for="equipamento">Equipamento</label>
           <select id="equipamento" name="equipamento" required>
             <option value="">Selecione um equipamento disponível</option>
-            <option value="chave-torque">Chave de Torque</option>
-            <option value="furadeira">Furadeira de Impacto</option>
-            <option value="multimetro">Multímetro Digital</option>
           </select>
+          <small class="erro-campo" data-erro-de="equipamento"></small>
         </p>
 
         <p>
           <label for="responsavel">Responsável</label>
           <input type="text" id="responsavel" name="responsavel" required>
+          <small class="erro-campo" data-erro-de="responsavel"></small>
         </p>
 
         <p>
           <label for="data-emprestimo">Data do empréstimo</label>
           <input type="date" id="data-emprestimo" name="data-emprestimo" required>
+          <small class="erro-campo" data-erro-de="dataEmprestimo"></small>
         </p>
 
         <p>
           <label for="previsao-devolucao">Previsão de devolução</label>
           <input type="date" id="previsao-devolucao" name="previsao-devolucao" required>
+          <small class="erro-campo" data-erro-de="previsaoDevolucao"></small>
         </p>
 
         <p>
@@ -69,7 +72,9 @@
 
   <section aria-labelledby="devolucao-titulo">
     <h3 id="devolucao-titulo">Registrar devolução</h3>
-    <form action="#" method="post">
+    <p class="alerta" data-alerta hidden></p>
+    <p id="sem-emprestimos-abertos" hidden>Não há empréstimos em aberto para devolução no momento.</p>
+    <form id="form-devolucao" novalidate>
       <fieldset>
         <legend>Dados da devolução</legend>
 
@@ -77,14 +82,14 @@
           <label for="emprestimo-devolucao">Empréstimo</label>
           <select id="emprestimo-devolucao" name="emprestimo-devolucao" required>
             <option value="">Selecione um empréstimo em aberto</option>
-            <option value="1">Furadeira de Impacto — Carlos Silva</option>
-            <option value="2">Multímetro Digital — Ana Pereira</option>
           </select>
+          <small class="erro-campo" data-erro-de="emprestimo"></small>
         </p>
 
         <p>
           <label for="data-devolucao">Data da devolução</label>
           <input type="date" id="data-devolucao" name="data-devolucao" required>
+          <small class="erro-campo" data-erro-de="dataDevolucao"></small>
         </p>
       </fieldset>
 
@@ -108,28 +113,7 @@
           <th scope="col">Situação</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-          <td data-label="Equipamento">Furadeira de Impacto</td>
-          <td data-label="Responsável">Carlos Silva</td>
-          <td data-label="Data do empréstimo">25/08/2026</td>
-          <td data-label="Previsão de devolução">05/09/2026</td>
-          <td data-label="Situação">Em aberto</td>
-        </tr>
-        <tr>
-          <td data-label="Equipamento">Multímetro Digital</td>
-          <td data-label="Responsável">Ana Pereira</td>
-          <td data-label="Data do empréstimo">28/08/2026</td>
-          <td data-label="Previsão de devolução">02/09/2026</td>
-          <td data-label="Situação">Em aberto</td>
-        </tr>
-        <tr>
-          <td data-label="Equipamento">Chave de Torque</td>
-          <td data-label="Responsável">João Souza</td>
-          <td data-label="Data do empréstimo">20/08/2026</td>
-          <td data-label="Previsão de devolução">24/08/2026</td>
-          <td data-label="Situação">Devolvido</td>
-        </tr>
+        <tbody id="tabela-emprestimos">
         </tbody>
       </table>
     </div>
@@ -139,5 +123,8 @@
 <footer>
   <p>&copy; 2026 Ferrum</p>
 </footer>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/emprestimos.js"></script>
 </body>
 </html>

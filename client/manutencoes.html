@@ -25,7 +25,9 @@
 
   <section aria-labelledby="registrar-manutencao-titulo">
     <h3 id="registrar-manutencao-titulo">Registrar manutenção</h3>
-    <form action="#" method="post">
+    <p class="alerta" data-alerta hidden></p>
+    <p id="sem-equipamentos-para-manutencao" hidden>Não há equipamentos disponíveis para enviar à manutenção no momento.</p>
+    <form id="form-manutencao" novalidate>
       <fieldset>
         <legend>Dados da manutenção</legend>
 
@@ -33,19 +35,20 @@
           <label for="equipamento-manutencao">Equipamento</label>
           <select id="equipamento-manutencao" name="equipamento-manutencao" required>
             <option value="">Selecione um equipamento</option>
-            <option value="compressor">Compressor de Ar</option>
-            <option value="furadeira">Furadeira de Impacto</option>
           </select>
+          <small class="erro-campo" data-erro-de="equipamento"></small>
         </p>
 
         <p>
           <label for="descricao-problema">Descrição do problema ou serviço</label>
           <textarea id="descricao-problema" name="descricao-problema" rows="3" required></textarea>
+          <small class="erro-campo" data-erro-de="descricao"></small>
         </p>
 
         <p>
           <label for="data-inicio">Data de início</label>
           <input type="date" id="data-inicio" name="data-inicio" required>
+          <small class="erro-campo" data-erro-de="dataInicio"></small>
         </p>
 
         <p>
@@ -71,7 +74,9 @@
 
   <section aria-labelledby="concluir-titulo">
     <h3 id="concluir-titulo">Concluir manutenção</h3>
-    <form action="#" method="post">
+    <p class="alerta" data-alerta hidden></p>
+    <p id="sem-manutencoes-abertas" hidden>Não há manutenções em andamento no momento.</p>
+    <form id="form-concluir-manutencao" novalidate>
       <fieldset>
         <legend>Dados da conclusão</legend>
 
@@ -79,13 +84,14 @@
           <label for="manutencao-concluir">Manutenção em andamento</label>
           <select id="manutencao-concluir" name="manutencao-concluir" required>
             <option value="">Selecione uma manutenção</option>
-            <option value="1">Compressor de Ar — iniciada em 22/08/2026</option>
           </select>
+          <small class="erro-campo" data-erro-de="manutencao"></small>
         </p>
 
         <p>
           <label for="data-conclusao">Data de conclusão</label>
           <input type="date" id="data-conclusao" name="data-conclusao" required>
+          <small class="erro-campo" data-erro-de="dataConclusao"></small>
         </p>
       </fieldset>
 
@@ -109,21 +115,7 @@
           <th scope="col">Situação</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-          <td data-label="Equipamento">Compressor de Ar</td>
-          <td data-label="Descrição">Vazamento no reservatório</td>
-          <td data-label="Data de início">22/08/2026</td>
-          <td data-label="Data de conclusão">—</td>
-          <td data-label="Situação">Em andamento</td>
-        </tr>
-        <tr>
-          <td data-label="Equipamento">Furadeira de Impacto</td>
-          <td data-label="Descrição">Troca de escovas do motor</td>
-          <td data-label="Data de início">10/08/2026</td>
-          <td data-label="Data de conclusão">15/08/2026</td>
-          <td data-label="Situação">Concluída</td>
-        </tr>
+        <tbody id="tabela-manutencoes">
         </tbody>
       </table>
     </div>
@@ -133,5 +125,8 @@
 <footer>
   <p>&copy; 2026 Ferrum</p>
 </footer>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/manutencoes.js"></script>
 </body>
 </html>

@@ -25,18 +25,22 @@
 
   <section aria-labelledby="cadastro-titulo">
     <h3 id="cadastro-titulo">Cadastrar equipamento</h3>
-    <form action="#" method="post">
+    <p class="alerta" data-alerta hidden></p>
+    <form id="form-equipamento" novalidate>
+      <input type="hidden" id="equipamento-id" name="equipamentoId" value="">
       <fieldset>
         <legend>Dados do equipamento</legend>
 
         <p>
           <label for="nome">Nome</label>
           <input type="text" id="nome" name="nome" required>
+          <small class="erro-campo" data-erro-de="nome"></small>
         </p>
 
         <p>
           <label for="identificacao">Identificação (patrimônio)</label>
           <input type="text" id="identificacao" name="identificacao" required>
+          <small class="erro-campo" data-erro-de="identificacao"></small>
         </p>
 
         <p>
@@ -53,28 +57,30 @@
             <option value="equipamento-medicao">Equipamento de medição</option>
             <option value="equipamento-seguranca">Equipamento de segurança</option>
           </select>
+          <small class="erro-campo" data-erro-de="categoria"></small>
         </p>
 
         <p>
           <label for="situacao">Situação</label>
-          <select id="situacao" name="situacao" required>
+          <select id="situacao" name="situacao">
             <option value="disponivel">Disponível</option>
             <option value="emprestado">Emprestado</option>
             <option value="manutencao">Em manutenção</option>
           </select>
+          <small class="dica-campo" id="dica-situacao" hidden>A situação é alterada automaticamente pelas telas de Empréstimos e Manutenções, não pode ser editada aqui diretamente.</small>
         </p>
       </fieldset>
 
       <p>
-        <button type="submit">Cadastrar equipamento</button>
-        <button type="reset">Limpar</button>
+        <button type="submit" id="botao-salvar-equipamento">Cadastrar equipamento</button>
+        <button type="reset" id="botao-cancelar-edicao">Limpar</button>
       </p>
     </form>
   </section>
 
   <section aria-labelledby="filtro-titulo">
     <h3 id="filtro-titulo">Filtrar equipamentos</h3>
-    <form action="#" method="get">
+    <form id="form-filtro-equipamentos">
       <p>
         <label for="filtro-categoria">Categoria</label>
         <select id="filtro-categoria" name="filtro-categoria">
@@ -96,12 +102,14 @@
       </p>
       <p>
         <button type="submit">Filtrar</button>
+        <button type="button" id="botao-limpar-filtro">Limpar filtro</button>
       </p>
     </form>
   </section>
 
   <section aria-labelledby="lista-titulo">
     <h3 id="lista-titulo">Equipamentos cadastrados</h3>
+    <p id="lista-vazia" hidden>Nenhum equipamento encontrado para os filtros selecionados.</p>
     <div class="table-responsive">
       <table>
         <caption>Lista de equipamentos e sua situação atual</caption>
@@ -113,43 +121,7 @@
           <th scope="col">Ações</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-          <td data-label="Nome">Furadeira de Impacto</td>
-          <td data-label="Categoria">Ferramenta elétrica</td>
-          <td data-label="Situação">Emprestado</td>
-          <td data-label="Ações">
-            <a href="#">Editar</a> |
-            <a href="#">Excluir</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="Nome">Multímetro Digital</td>
-          <td data-label="Categoria">Equipamento de medição</td>
-          <td data-label="Situação">Emprestado</td>
-          <td data-label="Ações">
-            <a href="#">Editar</a> |
-            <a href="#">Excluir</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="Nome">Compressor de Ar</td>
-          <td data-label="Categoria">Ferramenta elétrica</td>
-          <td data-label="Situação">Em manutenção</td>
-          <td data-label="Ações">
-            <a href="#">Editar</a> |
-            <a href="#">Excluir</a>
-          </td>
-        </tr>
-        <tr>
-          <td data-label="Nome">Chave de Torque</td>
-          <td data-label="Categoria">Ferramenta manual</td>
-          <td data-label="Situação">Disponível</td>
-          <td data-label="Ações">
-            <a href="#">Editar</a> |
-            <a href="#">Excluir</a>
-          </td>
-        </tr>
+        <tbody id="tabela-equipamentos">
         </tbody>
       </table>
     </div>
@@ -159,5 +131,8 @@
 <footer>
   <p>&copy; 2026 Ferrum</p>
 </footer>
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/equipamentos.js"></script>
 </body>
 </html>
