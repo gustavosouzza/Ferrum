@@ -26,7 +26,7 @@ function renderEstatisticas(db) {
 function renderPendentes(db) {
   const corpo = document.getElementById("tabela-pendentes");
   const vazio = document.getElementById("pendentes-vazio");
-  const hoje = new Date().toISOString().slice(0, 10);
+  const hoje = FerrumStore.hojeISO();
 
   const pendentes = FerrumStore.listarEmprestimosAbertos(db).sort((a, b) =>
     a.previsaoDevolucao.localeCompare(b.previsaoDevolucao)

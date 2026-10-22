@@ -62,13 +62,44 @@
 
         <p>
           <label for="situacao">Situação</label>
-          <select id="situacao" name="situacao">
+          <select id="situacao" name="situacao" aria-describedby="dica-situacao">
             <option value="disponivel">Disponível</option>
             <option value="emprestado">Emprestado</option>
             <option value="manutencao">Em manutenção</option>
           </select>
-          <small class="dica-campo" id="dica-situacao" hidden>A situação é alterada automaticamente pelas telas de Empréstimos e Manutenções, não pode ser editada aqui diretamente.</small>
+          <small class="dica-campo" id="dica-situacao">Ao escolher Emprestado ou Em manutenção, informe os dados abaixo: o registro também aparecerá nas telas de Empréstimos e Manutenções.</small>
         </p>
+
+        <div id="campos-emprestimo" hidden>
+          <p>
+            <label for="emp-responsavel">Responsável pelo empréstimo</label>
+            <input type="text" id="emp-responsavel">
+            <small class="erro-campo" data-erro-de="emprestimoResponsavel"></small>
+          </p>
+          <p>
+            <label for="emp-data">Data do empréstimo</label>
+            <input type="date" id="emp-data">
+            <small class="erro-campo" data-erro-de="emprestimoData"></small>
+          </p>
+          <p>
+            <label for="emp-previsao">Previsão de devolução</label>
+            <input type="date" id="emp-previsao">
+            <small class="erro-campo" data-erro-de="emprestimoPrevisao"></small>
+          </p>
+        </div>
+
+        <div id="campos-manutencao" hidden>
+          <p>
+            <label for="man-descricao">Problema ou serviço</label>
+            <textarea id="man-descricao" rows="3"></textarea>
+            <small class="erro-campo" data-erro-de="manutencaoDescricao"></small>
+          </p>
+          <p>
+            <label for="man-data">Data de início da manutenção</label>
+            <input type="date" id="man-data">
+            <small class="erro-campo" data-erro-de="manutencaoData"></small>
+          </p>
+        </div>
       </fieldset>
 
       <p>
@@ -109,6 +140,7 @@
 
   <section aria-labelledby="lista-titulo">
     <h3 id="lista-titulo">Equipamentos cadastrados</h3>
+    <p class="alerta" data-alerta hidden></p>
     <p id="lista-vazia" hidden>Nenhum equipamento encontrado para os filtros selecionados.</p>
     <div class="table-responsive">
       <table>

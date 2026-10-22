@@ -48,6 +48,10 @@ const FerrumUI = (() => {
 
       const input = localizarCampo(alvoErro);
       if (input) {
+        if (alvoErro) {
+          if (!alvoErro.id) alvoErro.id = `erro-${input.id || campo}`;
+          input.setAttribute("aria-describedby", alvoErro.id);
+        }
         input.setAttribute("aria-invalid", "true");
         input.classList.add("invalido");
         if (!primeiroInput) primeiroInput = input;
@@ -57,6 +61,7 @@ const FerrumUI = (() => {
     if (erros.geral) {
       const alvoGeral = form.querySelector('[data-erro-de="geral"]');
       if (alvoGeral) alvoGeral.textContent = erros.geral;
+      else mostrarAlerta(form.closest("section") || form, erros.geral, "erro");
     }
 
     if (primeiroInput && typeof primeiroInput.focus === "function") primeiroInput.focus();
@@ -80,9 +85,12 @@ const FerrumUI = (() => {
   function mostrarAlerta(container, mensagem, tipo = "sucesso") {
     const alvo = container.querySelector("[data-alerta]");
     if (!alvo) return;
-    alvo.textContent = mensagem;
+    // Torna o alerta visível antes de definir o texto e informa o tipo
+    // aos leitores de tela (erro = assertivo, sucesso = educado).
     alvo.className = `alerta alerta-${tipo}`;
+    alvo.setAttribute("role", tipo === "erro" ? "alert" : "status");
     alvo.hidden = false;
+    alvo.textContent = mensagem;
     if (tipo === "sucesso") {
       clearTimeout(alvo._timeoutId);
       alvo._timeoutId = setTimeout(() => {

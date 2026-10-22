@@ -23,8 +23,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const botaoLimparFiltro = document.getElementById("botao-limpar-filtro");
   const botaoCancelarEdicao = document.getElementById("botao-cancelar-edicao");
   const secaoCadastro = formEquipamento.closest("section");
+  const secaoLista = document.getElementById("lista-titulo").closest("section");
+
+  const selectSituacao = formEquipamento.elements.situacao;
+  const camposEmprestimo = document.getElementById("campos-emprestimo");
+  const camposManutencao = document.getElementById("campos-manutencao");
+
+  const DICA_CADASTRO =
+    "Ao escolher Emprestado ou Em manutenção, informe os dados abaixo: o registro também aparecerá nas telas de Empréstimos e Manutenções.";
+  const DICA_EDICAO =
+    "A situação é alterada automaticamente pelas telas de Empréstimos e Manutenções, não pode ser editada aqui diretamente.";
 
   renderTabela();
+  atualizarCamposSituacao();
+
+  /** Mostra os campos extras do cadastro conforme a situação escolhida (só fora do modo edição). */
+  function atualizarCamposSituacao() {
+    const cadastrando = !selectSituacao.disabled;
+    const hoje = FerrumStore.hojeISO();
+    const mostrarEmprestimo = cadastrando && selectSituacao.value === "emprestado";
+    const mostrarManutencao = cadastrando && selectSituacao.value === "manutencao";
+    camposEmprestimo.hidden = !mostrarEmprestimo;
+    camposManutencao.hidden = !mostrarManutencao;
+    if (mostrarEmprestimo && !document.getElementById("emp-data").value) {
+      document.getElementById("emp-data").value = hoje;
+    }
+    if (mostrarManutencao && !document.getElementById("man-data").value) {
+      document.getElementById("man-data").value = hoje;
+    }
+  }
+
+  selectSituacao.addEventListener("change", atualizarCamposSituacao);
+  // O reset nativo restaura os valores depois do clique; reavalia em seguida.
+  formEquipamento.addEventListener("reset", () => setTimeout(atualizarCamposSituacao, 0));
 
   formEquipamento.addEventListener("submit", (evento) => {
     evento.preventDefault();
@@ -33,7 +64,16 @@ document.addEventListener("DOMContentLoaded", () => {
       identificacao: formEquipamento.elements.identificacao.value,
       descricao: formEquipamento.elements.descricao.value,
       categoria: formEquipamento.elements.categoria.value,
-      situacao: formEquipamento.elements.situacao.value
+      situacao: selectSituacao.value,
+      emprestimo: {
+        responsavel: document.getElementById("emp-responsavel").value,
+        dataEmprestimo: document.getElementById("emp-data").value,
+        previsaoDevolucao: document.getElementById("emp-previsao").value
+      },
+      manutencao: {
+        descricao: document.getElementById("man-descricao").value,
+        dataInicio: document.getElementById("man-data").value
+      }
     };
 
     const idEmEdicao = formEquipamento.elements.equipamentoId.value;
@@ -90,7 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // durante a edição, em vez de aceitar um valor que a função
     // editarEquipamento() (store.js) vai ignorar silenciosamente.
     formEquipamento.elements.situacao.disabled = true;
-    document.getElementById("dica-situacao").hidden = false;
+    document.getElementById("dica-situacao").textContent = DICA_EDICAO;
+    atualizarCamposSituacao();
 
     document.getElementById("cadastro-titulo").textContent = `Editando: ${equipamento.nome}`;
     document.getElementById("botao-salvar-equipamento").textContent = "Salvar alterações";
@@ -101,8 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function sairDoModoEdicao() {
     formEquipamento.reset();
     formEquipamento.elements.equipamentoId.value = "";
+    // Voltando ao cadastro: a situação pode ser escolhida de novo.
     formEquipamento.elements.situacao.disabled = false;
-    document.getElementById("dica-situacao").hidden = true;
+    document.getElementById("dica-situacao").textContent = DICA_CADASTRO;
+    atualizarCamposSituacao();
     document.getElementById("cadastro-titulo").textContent = "Cadastrar equipamento";
     document.getElementById("botao-salvar-equipamento").textContent = "Cadastrar equipamento";
     document.getElementById("botao-cancelar-edicao").textContent = "Limpar";
@@ -145,8 +188,14 @@ document.addEventListener("DOMContentLoaded", () => {
         celulaAcoes = `
           <button type="button" class="btn-link" data-acao="editar" data-id="${equipamento.id}">Editar</button>
           <button type="button" class="btn-link btn-perigo" data-acao="excluir" data-id="${equipamento.id}" ${
-          podeExcluir ? "" : "disabled title=\"Equipamento emprestado ou em manutenção não pode ser excluído\""
-        }>Excluir</button>`;
+          podeExcluir ? "" : "disabled"
+        }>Excluir</button>${
+          podeExcluir
+            ? ""
+            : `<small class="dica-campo">Não pode ser excluído: ${
+                equipamento.situacao === "emprestado" ? "emprestado" : "em manutenção"
+              }.</small>`
+        }`;
       }
 
       linha.innerHTML = `
@@ -177,10 +226,11 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (acao === "confirmar-excluir") {
           const resultado = FerrumStore.excluirEquipamento(db, id);
           confirmandoExclusaoId = null;
+          // Alerta na própria seção da lista, perto do botão clicado.
           if (!resultado.ok) {
-            FerrumUI.mostrarAlerta(secaoCadastro, resultado.mensagem, "erro");
+            FerrumUI.mostrarAlerta(secaoLista, resultado.mensagem, "erro");
           } else {
-            FerrumUI.mostrarAlerta(secaoCadastro, "Equipamento excluído com sucesso.", "sucesso");
+            FerrumUI.mostrarAlerta(secaoLista, "Equipamento excluído com sucesso.", "sucesso");
           }
           renderTabela();
         }

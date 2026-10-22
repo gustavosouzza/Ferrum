@@ -67,7 +67,9 @@ const FerrumStore = (() => {
         save(seed);
         return seed;
       }
-      return JSON.parse(raw);
+      const dados = JSON.parse(raw);
+      if (!estruturaValida(dados)) throw new Error("Estrutura de dados do Ferrum inválida.");
+      return dados;
     } catch (erro) {
       // localStorage indisponível (modo privado antigo, cota excedida, JSON
       // corrompido) — cai para os dados iniciais em memória, sem quebrar a
@@ -77,19 +79,86 @@ const FerrumStore = (() => {
     }
   }
 
-  /** Grava o "banco" no localStorage. */
+  function estruturaValida(db) {
+    return Boolean(
+      db &&
+      Array.isArray(db.equipamentos) &&
+      Array.isArray(db.emprestimos) &&
+      Array.isArray(db.manutencoes) &&
+      Array.isArray(db.movimentacoes) &&
+      db.nextIds &&
+      Number.isFinite(db.nextIds.equipamento) &&
+      Number.isFinite(db.nextIds.emprestimo) &&
+      Number.isFinite(db.nextIds.manutencao)
+    );
+  }
+
+  /** Grava o "banco" no localStorage e informa se a gravação funcionou. */
   function save(db) {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      return true;
     } catch (erro) {
       console.warn("Ferrum: não foi possível salvar no localStorage.", erro);
+      return false;
     }
+  }
+
+  // Restaura o estado anterior se a persistência falhar, evitando que a tela
+  // mostre uma alteração que será perdida ao recarregar a página.
+  function persistirOuReverter(db, estadoAnterior) {
+    if (save(db)) return true;
+    Object.keys(db).forEach((chave) => delete db[chave]);
+    Object.assign(db, estadoAnterior);
+    return false;
+  }
+
+  function snapshot(db) {
+    return JSON.parse(JSON.stringify(db));
+  }
+
+  // Valida tanto o formato quanto a existência real da data (ex.: rejeita
+  // 2026-02-31, que passaria numa simples comparação de strings).
+  function dataISOValida(valor) {
+    if (typeof valor !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(valor)) return false;
+    const [ano, mes, dia] = valor.split("-").map(Number);
+    const data = new Date(Date.UTC(ano, mes - 1, dia));
+    return data.getUTCFullYear() === ano && data.getUTCMonth() === mes - 1 && data.getUTCDate() === dia;
   }
 
   function resetDB() {
     const seed = seedData();
     save(seed);
     return seed;
+  }
+
+  /**
+   * Data de hoje no formato AAAA-MM-DD usando o fuso horário LOCAL.
+   * (new Date().toISOString() devolve a data em UTC, que no Brasil já é
+   * "amanhã" a partir das 21h.)
+   */
+  function hojeISO() {
+    const d = new Date();
+    const dois = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}`;
+  }
+
+  /**
+   * Relê o localStorage e atualiza o objeto `db` em memória (no mesmo
+   * objeto, para que as páginas continuem usando a mesma referência).
+   * Chamada antes de cada operação de escrita, para que uma aba aberta
+   * há mais tempo não sobrescreva alterações feitas em outra aba.
+   */
+  function refresh(db) {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const dados = JSON.parse(raw);
+        if (estruturaValida(dados)) Object.assign(db, dados);
+      }
+    } catch (erro) {
+      // Sem acesso ao localStorage: segue com o estado em memória.
+    }
   }
 
   function registrarMovimentacao(db, texto) {
@@ -117,6 +186,8 @@ const FerrumStore = (() => {
    * Retorna { ok: true, equipamento } ou { ok: false, erros: { campo: mensagem } }.
    */
   function adicionarEquipamento(db, dados) {
+    refresh(db);
+    const estadoAnterior = snapshot(db);
     const erros = {};
     const nome = (dados.nome || "").trim();
     const identificacao = (dados.identificacao || "").trim();
@@ -132,6 +203,24 @@ const FerrumStore = (() => {
     }
     if (!dados.categoria) erros.categoria = "Selecione uma categoria.";
 
+    // Situação inicial: "emprestado" e "manutencao" exigem os dados do
+    // registro correspondente, que é criado junto com o equipamento.
+    const situacao = ["emprestado", "manutencao"].includes(dados.situacao) ? dados.situacao : "disponivel";
+    const emp = dados.emprestimo || {};
+    const man = dados.manutencao || {};
+    if (situacao === "emprestado") {
+      if (!(emp.responsavel || "").trim()) erros.emprestimoResponsavel = "Informe o responsável.";
+      if (!dataISOValida(emp.dataEmprestimo)) erros.emprestimoData = "Informe uma data de empréstimo válida.";
+      if (!dataISOValida(emp.previsaoDevolucao)) {
+        erros.emprestimoPrevisao = "Informe uma previsão de devolução válida.";
+      } else if (dataISOValida(emp.dataEmprestimo) && emp.previsaoDevolucao < emp.dataEmprestimo) {
+        erros.emprestimoPrevisao = "A previsão de devolução não pode ser anterior à data do empréstimo.";
+      }
+    } else if (situacao === "manutencao") {
+      if (!(man.descricao || "").trim()) erros.manutencaoDescricao = "Descreva o problema ou serviço.";
+      if (!dataISOValida(man.dataInicio)) erros.manutencaoData = "Informe uma data de início válida.";
+    }
+
     if (Object.keys(erros).length > 0) return { ok: false, erros };
 
     const equipamento = {
@@ -140,16 +229,45 @@ const FerrumStore = (() => {
       identificacao,
       descricao: (dados.descricao || "").trim(),
       categoria: dados.categoria,
-      situacao: dados.situacao || "disponivel",
-      dataCadastro: new Date().toISOString().slice(0, 10)
+      situacao,
+      dataCadastro: hojeISO()
     };
     db.equipamentos.push(equipamento);
     registrarMovimentacao(db, `Equipamento cadastrado — ${equipamento.nome}`);
-    save(db);
+
+    if (situacao === "emprestado") {
+      const responsavel = emp.responsavel.trim();
+      db.emprestimos.push({
+        id: db.nextIds.emprestimo++,
+        equipamentoId: equipamento.id,
+        responsavel,
+        dataEmprestimo: emp.dataEmprestimo,
+        previsaoDevolucao: emp.previsaoDevolucao,
+        dataDevolucao: null,
+        observacoes: "",
+        situacao: "aberto"
+      });
+      registrarMovimentacao(db, `Empréstimo registrado — ${equipamento.nome} — ${responsavel}`);
+    } else if (situacao === "manutencao") {
+      db.manutencoes.push({
+        id: db.nextIds.manutencao++,
+        equipamentoId: equipamento.id,
+        descricao: man.descricao.trim(),
+        dataInicio: man.dataInicio,
+        dataConclusao: null,
+        situacao: "em-andamento",
+        observacoes: ""
+      });
+      registrarMovimentacao(db, `Manutenção iniciada — ${equipamento.nome}`);
+    }
+
+    if (!persistirOuReverter(db, estadoAnterior)) return { ok: false, erros: { geral: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." } };
     return { ok: true, equipamento };
   }
 
   function editarEquipamento(db, id, dados) {
+    refresh(db);
+    const estadoAnterior = snapshot(db);
     const equipamento = buscarEquipamento(db, id);
     if (!equipamento) return { ok: false, erros: { geral: "Equipamento não encontrado." } };
 
@@ -175,7 +293,7 @@ const FerrumStore = (() => {
     equipamento.descricao = (dados.descricao || "").trim();
     equipamento.categoria = dados.categoria;
     registrarMovimentacao(db, `Equipamento editado — ${equipamento.nome}`);
-    save(db);
+    if (!persistirOuReverter(db, estadoAnterior)) return { ok: false, erros: { geral: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." } };
     return { ok: true, equipamento };
   }
 
@@ -184,6 +302,8 @@ const FerrumStore = (() => {
    * um equipamento emprestado ou em manutenção não pode ser removido.
    */
   function excluirEquipamento(db, id) {
+    refresh(db);
+    const estadoAnterior = snapshot(db);
     const equipamento = buscarEquipamento(db, id);
     if (!equipamento) return { ok: false, mensagem: "Equipamento não encontrado." };
     if (equipamento.situacao !== "disponivel") {
@@ -196,7 +316,7 @@ const FerrumStore = (() => {
     }
     db.equipamentos = db.equipamentos.filter((e) => e.id !== id);
     registrarMovimentacao(db, `Equipamento excluído — ${equipamento.nome}`);
-    save(db);
+    if (!persistirOuReverter(db, estadoAnterior)) return { ok: false, erros: { geral: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." }, mensagem: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." };
     return { ok: true };
   }
 
@@ -213,6 +333,8 @@ const FerrumStore = (() => {
   }
 
   function registrarEmprestimo(db, dados) {
+    refresh(db);
+    const estadoAnterior = snapshot(db);
     const erros = {};
     const equipamentoId = Number(dados.equipamentoId);
     const equipamento = buscarEquipamento(db, equipamentoId);
@@ -225,10 +347,10 @@ const FerrumStore = (() => {
     const responsavel = (dados.responsavel || "").trim();
     if (!responsavel) erros.responsavel = "Informe o responsável.";
 
-    if (!dados.dataEmprestimo) erros.dataEmprestimo = "Informe a data do empréstimo.";
-    if (!dados.previsaoDevolucao) {
-      erros.previsaoDevolucao = "Informe a previsão de devolução.";
-    } else if (dados.dataEmprestimo && dados.previsaoDevolucao < dados.dataEmprestimo) {
+    if (!dataISOValida(dados.dataEmprestimo)) erros.dataEmprestimo = "Informe uma data de empréstimo válida.";
+    if (!dataISOValida(dados.previsaoDevolucao)) {
+      erros.previsaoDevolucao = "Informe uma previsão de devolução válida.";
+    } else if (dataISOValida(dados.dataEmprestimo) && dados.previsaoDevolucao < dados.dataEmprestimo) {
       erros.previsaoDevolucao = "A previsão de devolução não pode ser anterior à data do empréstimo.";
     }
 
@@ -247,11 +369,13 @@ const FerrumStore = (() => {
     db.emprestimos.push(emprestimo);
     equipamento.situacao = "emprestado";
     registrarMovimentacao(db, `Empréstimo registrado — ${equipamento.nome} — ${responsavel}`);
-    save(db);
+    if (!persistirOuReverter(db, estadoAnterior)) return { ok: false, erros: { geral: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." }, mensagem: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." };
     return { ok: true, emprestimo };
   }
 
   function registrarDevolucao(db, dados) {
+    refresh(db);
+    const estadoAnterior = snapshot(db);
     const erros = {};
     const emprestimoId = Number(dados.emprestimoId);
     const emprestimo = db.emprestimos.find((e) => e.id === emprestimoId);
@@ -260,8 +384,8 @@ const FerrumStore = (() => {
     else if (!emprestimo || emprestimo.situacao !== "aberto")
       erros.emprestimo = "Empréstimo inválido ou já devolvido.";
 
-    if (!dados.dataDevolucao) {
-      erros.dataDevolucao = "Informe a data da devolução.";
+    if (!dataISOValida(dados.dataDevolucao)) {
+      erros.dataDevolucao = "Informe uma data de devolução válida.";
     } else if (emprestimo && dados.dataDevolucao < emprestimo.dataEmprestimo) {
       erros.dataDevolucao = "A data da devolução não pode ser anterior à data do empréstimo.";
     }
@@ -276,7 +400,7 @@ const FerrumStore = (() => {
       db,
       `Devolução registrada — ${equipamento ? equipamento.nome : "equipamento"}`
     );
-    save(db);
+    if (!persistirOuReverter(db, estadoAnterior)) return { ok: false, erros: { geral: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." }, mensagem: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." };
     return { ok: true, emprestimo };
   }
 
@@ -293,6 +417,8 @@ const FerrumStore = (() => {
   }
 
   function registrarManutencao(db, dados) {
+    refresh(db);
+    const estadoAnterior = snapshot(db);
     const erros = {};
     const equipamentoId = Number(dados.equipamentoId);
     const equipamento = buscarEquipamento(db, equipamentoId);
@@ -306,7 +432,7 @@ const FerrumStore = (() => {
 
     const descricao = (dados.descricao || "").trim();
     if (!descricao) erros.descricao = "Descreva o problema ou serviço.";
-    if (!dados.dataInicio) erros.dataInicio = "Informe a data de início.";
+    if (!dataISOValida(dados.dataInicio)) erros.dataInicio = "Informe uma data de início válida.";
 
     if (Object.keys(erros).length > 0) return { ok: false, erros };
 
@@ -328,11 +454,13 @@ const FerrumStore = (() => {
         ? `Manutenção registrada já concluída — ${equipamento.nome}`
         : `Manutenção iniciada — ${equipamento.nome}`
     );
-    save(db);
+    if (!persistirOuReverter(db, estadoAnterior)) return { ok: false, erros: { geral: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." }, mensagem: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." };
     return { ok: true, manutencao };
   }
 
   function concluirManutencao(db, dados) {
+    refresh(db);
+    const estadoAnterior = snapshot(db);
     const erros = {};
     const manutencaoId = Number(dados.manutencaoId);
     const manutencao = db.manutencoes.find((m) => m.id === manutencaoId);
@@ -341,8 +469,8 @@ const FerrumStore = (() => {
     else if (!manutencao || manutencao.situacao !== "em-andamento")
       erros.manutencao = "Manutenção inválida ou já concluída.";
 
-    if (!dados.dataConclusao) {
-      erros.dataConclusao = "Informe a data de conclusão.";
+    if (!dataISOValida(dados.dataConclusao)) {
+      erros.dataConclusao = "Informe uma data de conclusão válida.";
     } else if (manutencao && dados.dataConclusao < manutencao.dataInicio) {
       erros.dataConclusao = "A data de conclusão não pode ser anterior à data de início.";
     }
@@ -357,7 +485,7 @@ const FerrumStore = (() => {
       db,
       `Manutenção concluída — ${equipamento ? equipamento.nome : "equipamento"}`
     );
-    save(db);
+    if (!persistirOuReverter(db, estadoAnterior)) return { ok: false, erros: { geral: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." }, mensagem: "Não foi possível salvar os dados. Verifique o armazenamento do navegador e tente novamente." };
     return { ok: true, manutencao };
   }
 
@@ -393,7 +521,7 @@ const FerrumStore = (() => {
   function formatarDataHora(isoDateTime) {
     const d = new Date(isoDateTime);
     if (Number.isNaN(d.getTime())) return "—";
-    return d.toLocaleDateString("pt-BR");
+    return d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
   }
 
   const CATEGORIAS = {
@@ -430,6 +558,7 @@ const FerrumStore = (() => {
     getMovimentacoesRecentes,
     formatarData,
     formatarDataHora,
+    hojeISO,
     CATEGORIAS,
     SITUACOES_EQUIPAMENTO
   };

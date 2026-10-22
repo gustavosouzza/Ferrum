@@ -1,4 +1,3 @@
-
 *,
 *::before,
 *::after {
@@ -441,6 +440,11 @@ section ol li {
     gap: var(--space-2) var(--space-5);
   }
 
+  /* Mensagens de erro/dica ficam na coluna do campo, logo abaixo dele */
+  form p:has(> label) > small {
+    grid-column: 2;
+  }
+
   /* Dashboard: cards de resumo em duas colunas */
   dl.stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -582,6 +586,11 @@ section ol li {
   color: var(--color-accent-dark);
   font-size: 0.8rem;
   margin-top: var(--space-1);
+}
+
+/* Sem mensagem, o <small> não ocupa espaço (nem linha extra no grid). */
+.erro-campo:empty {
+  display: none;
 }
 
 .dica-campo {
