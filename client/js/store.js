@@ -17,10 +17,10 @@
  *
  * As páginas (dashboard.js, equipamentos.js, emprestimos.js,
  * manutencoes.js) não leem nem gravam o localStorage diretamente —
- * elas sempre passam por este módulo (objeto global `FerrumStore`).
+ * elas sempre passam por este módulo (módulo `FerrumStore`).
  */
 
-const FerrumStore = (() => {
+export const FerrumStore = (() => {
   const STORAGE_KEY = "ferrum-db-v1";
 
   /** Dados iniciais, usados apenas na primeira execução (localStorage vazio). */

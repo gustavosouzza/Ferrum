@@ -20,7 +20,7 @@ O projeto está sendo desenvolvido de forma incremental ao longo da disciplina *
 | 02 | Protótipo estrutural com HTML semântico | ✅ Concluída |
 | 03 | Interface responsiva com CSS | ✅ Concluída |
 | 04 | Interatividade com JavaScript | ✅ Concluída |
-| 05 | Modularização e comunicação assíncrona | ⏳ Pendente |
+| 05 | Modularização e comunicação assíncrona | ✅ Concluída  |
 | 06 | API REST com Java e Spring Boot | ⏳ Pendente |
 | 07 | Persistência e CRUD com banco de dados | ⏳ Pendente |
 | 08 | Organização arquitetural | ⏳ Pendente |
@@ -52,7 +52,7 @@ A aplicação também deverá disponibilizar informações que facilitem a ident
 
 ## Funcionalidades
 
-### Implementadas (Etapas 02, 03 e 04)
+### Implementadas (Etapas 02, 03, 04 e 05)
 
 As telas abaixo têm estrutura HTML semântica, estilo responsivo e agora interatividade real em JavaScript, com os dados persistidos no `localStorage` do navegador (ver [`docs/etapa-04.md`](docs/etapa-04.md) para o detalhamento completo):
 
@@ -61,12 +61,12 @@ As telas abaixo têm estrutura HTML semântica, estilo responsivo e agora intera
 - filtro dinâmico de equipamentos por categoria e situação, sem recarregar a página;
 - registro de empréstimo e de devolução, com regras de disponibilidade e validação de datas;
 - registro e conclusão de manutenção, com histórico;
-- dashboard com indicadores calculados em tempo real (total, disponíveis, emprestados, em manutenção), lista de empréstimos pendentes (com destaque para atrasados) e movimentações recentes.
+- dashboard com indicadores calculados em tempo real (total, disponíveis, emprestados, em manutenção), lista de empréstimos pendentes (com destaque para atrasados) e movimentações recentes;
+- JavaScript organizado em módulos ES, com serviços assíncronos simulados, estados de carregamento e tratamento de erros (Etapa 05).
 
 ### Planejadas (próximas etapas)
 
 - Cadastro e consulta de categorias como entidade própria;
-- Modularização do JavaScript e comunicação assíncrona (Etapa 05);
 - API REST em Java/Spring Boot (Etapa 06);
 - Persistência em banco de dados relacional, substituindo o `localStorage` (Etapa 07).
 
@@ -331,12 +331,12 @@ O projeto é um front-end estático servido como arquivos HTML/CSS/JS puros (sem
 
 Para visualizar localmente:
 
-```bash
-cd client
-python3 -m http.server 8000
-```
+1. Abra a pasta `client/` no Visual Studio Code.
+2. Instale a extensão **Live Server** (Ritwick Dey), caso ainda não esteja instalada.
+3. Clique com o botão direito em `index.html` e selecione **Open with Live Server**.
+4. O navegador abrirá a aplicação em um endereço local, normalmente `http://127.0.0.1:5500`.
 
-Depois, acesse `http://localhost:8000/index.html` no navegador e navegue entre as páginas pelo menu superior. Para conferir a responsividade, use o modo de dispositivo das ferramentas de desenvolvedor do navegador nos tamanhos 1440×900 (desktop), 768×1024 (tablet) e 390×844 (smartphone). Para testar as funcionalidades interativas (cadastro, filtro, empréstimo, devolução, manutenção), siga o roteiro em [`docs/etapa-04.md`](docs/etapa-04.md#instruções-para-testar-as-funcionalidades). Para reiniciar os dados de demonstração, execute `localStorage.removeItem("ferrum-db-v1")` no console do navegador e recarregue a página.
+Depois que o Live Server abrir o navegador, navegue entre as páginas pelo menu superior. Para conferir a responsividade, use o modo de dispositivo das ferramentas de desenvolvedor do navegador nos tamanhos 1440×900 (desktop), 768×1024 (tablet) e 390×844 (smartphone). Para testar as funcionalidades interativas (cadastro, filtro, empréstimo, devolução, manutenção), siga o roteiro em [`docs/etapa-04.md`](docs/etapa-04.md#instruções-para-testar-as-funcionalidades). Para reiniciar os dados de demonstração, execute `localStorage.removeItem("ferrum-db-v1")` no console do navegador e recarregue a página.
 
 Quando o back-end for implementado, esta seção será atualizada com:
 
@@ -372,3 +372,15 @@ Algumas decisões ainda serão refinadas durante o desenvolvimento, incluindo:
 - estratégia de notificações.
 
 Essas decisões serão registradas na documentação do projeto conforme forem tomadas.
+
+## Etapa 05 — Modularização e comunicação assíncrona
+
+O JavaScript foi organizado em módulos ES (`import`/`export`) e dividido entre camada de API simulada, serviços por funcionalidade, dados, interface e scripts das páginas.
+
+As consultas e operações utilizam Promises e `async/await`, com estados de carregamento, mensagens de sucesso e tratamento de erros de comunicação. Nesta etapa, a API é simulada e os dados continuam persistidos no `localStorage`; a integração com a API REST Java/Spring Boot será realizada posteriormente.
+
+A documentação detalhada, incluindo a matriz de requisitos e as instruções de teste, está em [`docs/etapa-05.md`](docs/etapa-05.md).
+
+### Executar a aplicação
+
+Abra a pasta `client/` no Visual Studio Code e use a extensão **Live Server**: clique com o botão direito em `index.html` e selecione **Open with Live Server**. Como o projeto utiliza módulos JavaScript, execute-o por HTTP local, e não abrindo os arquivos HTML diretamente.

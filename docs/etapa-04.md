@@ -194,15 +194,8 @@ executada de fato no navegador antes da captura.
 
 ## Instruções para testar as funcionalidades
 
-1. Suba um servidor estático na pasta `client/` (necessário porque o `fetch`/
-   `localStorage` de alguns navegadores se comporta melhor servido por HTTP do
-   que abrindo o arquivo diretamente):
-   ```bash
-   cd client
-   python3 -m http.server 8000
-   ```
-2. Acesse `http://localhost:8000/index.html`.
-3. **Cadastro/edição/exclusão de equipamento:** vá em "Equipamentos", tente
+1. Abra a pasta `client/` no Visual Studio Code e utilize a extensão **Live Server** (Ritwick Dey): clique com o botão direito em `index.html` e selecione **Open with Live Server**. O navegador abrirá a aplicação em um endereço local, normalmente `http://127.0.0.1:5500`.
+2. **Cadastro/edição/exclusão de equipamento:** vá em "Equipamentos", tente
    enviar o formulário de cadastro em branco (deve mostrar erros), depois
    preencha nome, identificação e categoria e cadastre. Clique em "Editar" numa
    linha da tabela para alterar os dados, ou em "Excluir" para ver a

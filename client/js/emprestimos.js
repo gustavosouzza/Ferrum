@@ -1,30 +1,83 @@
 /**
- * emprestimos.js — Etapa 04
- * ------------------------------------------------------------------
- * Comportamento da tela "Empréstimos" (emprestimos.html):
- *   - registro de empréstimo, com validação de datas e checagem de
- *     disponibilidade do equipamento (regra de negócio da Etapa 01);
- *   - registro de devolução, atualizando a situação do equipamento;
- *   - histórico de empréstimos renderizado dinamicamente a partir dos
- *     dados salvos.
- *
- * Os dois <select> (equipamento e empréstimo em aberto) são
- * preenchidos via JavaScript a partir dos dados reais, em vez de
- * opções fixas no HTML — assim eles nunca ficam desatualizados em
- * relação à situação de cada equipamento/empréstimo.
+ * emprestimos.js — Etapa 05
+ * Registro e consulta assíncrona de empréstimos e devoluções.
  */
+import { FerrumStore } from "./store.js";
+import { FerrumUI } from "./ui.js";
+import { listarEquipamentos } from "./services/equipamento-service.js";
+import {
+  listarEmprestimos, listarEmprestimosAbertos,
+  registrarEmprestimo, registrarDevolucao
+} from "./services/emprestimo-service.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const db = FerrumStore.load();
-
+  const main = document.querySelector("main");
   const formEmprestimo = document.getElementById("form-emprestimo");
   const formDevolucao = document.getElementById("form-devolucao");
   const selectEquipamento = document.getElementById("equipamento");
   const selectEmprestimo = document.getElementById("emprestimo-devolucao");
 
-  renderTudo();
+  async function renderTudo() {
+    FerrumUI.mostrarCarregamento(main, true, "Consultando empréstimos...");
+    try {
+      const [equipamentos, abertos, historico] = await Promise.all([
+        listarEquipamentos(db, { situacao: "disponivel" }),
+        listarEmprestimosAbertos(db),
+        listarEmprestimos(db)
+      ]);
+      selectEquipamento.innerHTML = '<option value="">Selecione um equipamento disponível</option>';
+      equipamentos.forEach((equip) => {
+        const option = document.createElement("option");
+        option.value = equip.id;
+        option.textContent = `${equip.nome} (${equip.identificacao})`;
+        selectEquipamento.appendChild(option);
+      });
+      const semEquipamentos = equipamentos.length === 0;
+      document.getElementById("sem-equipamentos-disponiveis").hidden = !semEquipamentos;
+      selectEquipamento.disabled = semEquipamentos;
+      formEmprestimo.querySelector('button[type="submit"]').disabled = semEquipamentos;
 
-  formEmprestimo.addEventListener("submit", (evento) => {
+      selectEmprestimo.innerHTML = '<option value="">Selecione um empréstimo em aberto</option>';
+      abertos.forEach((emprestimo) => {
+        const equip = equipamentos.find((e) => e.id === emprestimo.equipamentoId) ||
+          db.equipamentos.find((e) => e.id === emprestimo.equipamentoId);
+        const option = document.createElement("option");
+        option.value = emprestimo.id;
+        option.textContent = `${equip ? equip.nome : "—"} — ${emprestimo.responsavel}`;
+        selectEmprestimo.appendChild(option);
+      });
+      const semAbertos = abertos.length === 0;
+      document.getElementById("sem-emprestimos-abertos").hidden = !semAbertos;
+      selectEmprestimo.disabled = semAbertos;
+      formDevolucao.querySelector('button[type="submit"]').disabled = semAbertos;
+      await renderHistorico(historico);
+    } catch (erro) {
+      FerrumUI.mostrarAlerta(main, erro.message || "Não foi possível consultar os empréstimos.", "erro");
+    } finally {
+      FerrumUI.mostrarCarregamento(main, false);
+    }
+  }
+
+  async function renderHistorico(historico = null) {
+    const dados = historico || await listarEmprestimos(db);
+    const corpo = document.getElementById("tabela-emprestimos");
+    corpo.innerHTML = "";
+    for (const emprestimo of dados) {
+      const equipamento = db.equipamentos.find((e) => e.id === emprestimo.equipamentoId);
+      const linha = document.createElement("tr");
+      const aberto = emprestimo.situacao === "aberto";
+      linha.innerHTML = `
+        <td data-label="Equipamento">${FerrumUI.escapeHtml(equipamento ? equipamento.nome : "Equipamento removido")}</td>
+        <td data-label="Responsável">${FerrumUI.escapeHtml(emprestimo.responsavel)}</td>
+        <td data-label="Data do empréstimo">${FerrumStore.formatarData(emprestimo.dataEmprestimo)}</td>
+        <td data-label="Previsão de devolução">${FerrumStore.formatarData(emprestimo.previsaoDevolucao)}</td>
+        <td data-label="Situação"><span class="etiqueta etiqueta-${aberto ? "emprestado" : "disponivel"}">${aberto ? "Em aberto" : "Devolvido"}</span></td>`;
+      corpo.appendChild(linha);
+    }
+  }
+
+  formEmprestimo.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     const dados = {
       equipamentoId: selectEquipamento.value,
@@ -33,99 +86,37 @@ document.addEventListener("DOMContentLoaded", () => {
       previsaoDevolucao: formEmprestimo.elements["previsao-devolucao"].value,
       observacoes: formEmprestimo.elements.observacoes.value
     };
-
-    const resultado = FerrumStore.registrarEmprestimo(db, dados);
-    if (!resultado.ok) {
-      FerrumUI.exibirErros(formEmprestimo, resultado.erros);
-      return;
-    }
-
-    FerrumUI.limparErros(formEmprestimo);
-    formEmprestimo.reset();
-    FerrumUI.mostrarAlerta(formEmprestimo.closest("section"), "Empréstimo registrado com sucesso.", "sucesso");
-    renderTudo();
+    FerrumUI.mostrarCarregamento(main, true, "Enviando registro de empréstimo...");
+    try {
+      const resultado = await registrarEmprestimo(db, dados);
+      if (!resultado.ok) { FerrumUI.exibirErros(formEmprestimo, resultado.erros); return; }
+      FerrumUI.limparErros(formEmprestimo);
+      formEmprestimo.reset();
+      FerrumUI.mostrarAlerta(formEmprestimo.closest("section"), "Empréstimo registrado com sucesso.", "sucesso");
+      await renderTudo();
+    } catch (erro) {
+      FerrumUI.mostrarAlerta(formEmprestimo.closest("section"), erro.message, "erro");
+    } finally { FerrumUI.mostrarCarregamento(main, false); }
   });
 
-  formDevolucao.addEventListener("submit", (evento) => {
+  formDevolucao.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     const dados = {
       emprestimoId: selectEmprestimo.value,
       dataDevolucao: formDevolucao.elements["data-devolucao"].value
     };
-
-    const resultado = FerrumStore.registrarDevolucao(db, dados);
-    if (!resultado.ok) {
-      FerrumUI.exibirErros(formDevolucao, resultado.erros);
-      return;
-    }
-
-    FerrumUI.limparErros(formDevolucao);
-    formDevolucao.reset();
-    FerrumUI.mostrarAlerta(formDevolucao.closest("section"), "Devolução registrada com sucesso.", "sucesso");
-    renderTudo();
+    FerrumUI.mostrarCarregamento(main, true, "Enviando registro de devolução...");
+    try {
+      const resultado = await registrarDevolucao(db, dados);
+      if (!resultado.ok) { FerrumUI.exibirErros(formDevolucao, resultado.erros); return; }
+      FerrumUI.limparErros(formDevolucao);
+      formDevolucao.reset();
+      FerrumUI.mostrarAlerta(formDevolucao.closest("section"), "Devolução registrada com sucesso.", "sucesso");
+      await renderTudo();
+    } catch (erro) {
+      FerrumUI.mostrarAlerta(formDevolucao.closest("section"), erro.message, "erro");
+    } finally { FerrumUI.mostrarCarregamento(main, false); }
   });
 
-  function renderTudo() {
-    renderSelectEquipamentosDisponiveis();
-    renderSelectEmprestimosAbertos();
-    renderHistorico();
-  }
-
-  function renderSelectEquipamentosDisponiveis() {
-    const disponiveis = FerrumStore.listarEquipamentos(db, { situacao: "disponivel" });
-    selectEquipamento.innerHTML = '<option value="">Selecione um equipamento disponível</option>';
-    disponiveis.forEach((equip) => {
-      const opcao = document.createElement("option");
-      opcao.value = equip.id;
-      opcao.textContent = `${equip.nome} (${equip.identificacao})`;
-      selectEquipamento.appendChild(opcao);
-    });
-
-    const aviso = document.getElementById("sem-equipamentos-disponiveis");
-    const semOpcoes = disponiveis.length === 0;
-    aviso.hidden = !semOpcoes;
-    selectEquipamento.disabled = semOpcoes;
-    formEmprestimo.querySelector('button[type="submit"]').disabled = semOpcoes;
-  }
-
-  function renderSelectEmprestimosAbertos() {
-    const abertos = FerrumStore.listarEmprestimosAbertos(db);
-    selectEmprestimo.innerHTML = '<option value="">Selecione um empréstimo em aberto</option>';
-    abertos.forEach((emprestimo) => {
-      const equipamento = FerrumStore.buscarEquipamento(db, emprestimo.equipamentoId);
-      const opcao = document.createElement("option");
-      opcao.value = emprestimo.id;
-      opcao.textContent = `${equipamento ? equipamento.nome : "—"} — ${emprestimo.responsavel}`;
-      selectEmprestimo.appendChild(opcao);
-    });
-
-    const aviso = document.getElementById("sem-emprestimos-abertos");
-    const semOpcoes = abertos.length === 0;
-    aviso.hidden = !semOpcoes;
-    selectEmprestimo.disabled = semOpcoes;
-    formDevolucao.querySelector('button[type="submit"]').disabled = semOpcoes;
-  }
-
-  function renderHistorico() {
-    const corpo = document.getElementById("tabela-emprestimos");
-    const historico = FerrumStore.listarEmprestimos(db);
-    corpo.innerHTML = "";
-
-    historico.forEach((emprestimo) => {
-      const equipamento = FerrumStore.buscarEquipamento(db, emprestimo.equipamentoId);
-      const linha = document.createElement("tr");
-      const situacaoTexto = emprestimo.situacao === "aberto" ? "Em aberto" : "Devolvido";
-
-      linha.innerHTML = `
-        <td data-label="Equipamento">${FerrumUI.escapeHtml(equipamento ? equipamento.nome : "Equipamento removido")}</td>
-        <td data-label="Responsável">${FerrumUI.escapeHtml(emprestimo.responsavel)}</td>
-        <td data-label="Data do empréstimo">${FerrumStore.formatarData(emprestimo.dataEmprestimo)}</td>
-        <td data-label="Previsão de devolução">${FerrumStore.formatarData(emprestimo.previsaoDevolucao)}</td>
-        <td data-label="Situação">
-          <span class="etiqueta etiqueta-${emprestimo.situacao === "aberto" ? "emprestado" : "disponivel"}">${situacaoTexto}</span>
-        </td>
-      `;
-      corpo.appendChild(linha);
-    });
-  }
+  await renderTudo();
 });

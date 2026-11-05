@@ -218,19 +218,9 @@ Empréstimos.
 
 ## Como executar e visualizar o projeto
 
-O projeto continua sendo um front-end estático (HTML + CSS puro), sem
-dependências de instalação. Para visualizar:
+O projeto é um front-end estático. Para visualizar, abra a pasta `client/` no Visual Studio Code, instale a extensão **Live Server** (Ritwick Dey), caso necessário, e clique com o botão direito em `index.html` > **Open with Live Server**. O navegador abrirá a aplicação em um endereço local.
 
-1. Abrir a pasta `client/` em um servidor HTTP simples, por exemplo:
-   ```
-   cd client
-   python3 -m http.server 8000
-   ```
-2. Acessar `http://localhost:8000/index.html` no navegador.
-3. Navegar entre as páginas pelo menu superior.
-4. Para testar a responsividade, usar as ferramentas de desenvolvedor
-   do navegador (modo de dispositivo) e configurar manualmente os
-   tamanhos 1440×900, 768×1024 e 390×844.
+Para testar a responsividade, use o modo de dispositivo das ferramentas de desenvolvedor do navegador e configure os tamanhos 1440×900, 768×1024 e 390×844.
 
 ## O que não foi feito nesta etapa (fora do escopo)
 

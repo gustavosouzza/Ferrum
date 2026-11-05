@@ -1,5 +1,5 @@
 /**
- * ui.js — Etapa 04
+ * ui.js — Etapas 04 e 05
  * ------------------------------------------------------------------
  * Funções de apoio para manipulação do DOM, usadas por todas as
  * páginas: exibir/limpar mensagens de erro em campos de formulário,
@@ -7,7 +7,7 @@
  * HTML (evita que dados digitados pelo usuário quebrem a página).
  */
 
-const FerrumUI = (() => {
+export const FerrumUI = (() => {
   /** Evita que o conteúdo inserido via innerHTML seja interpretado como HTML. */
   function escapeHtml(valor) {
     const div = document.createElement("div");
@@ -99,10 +99,25 @@ const FerrumUI = (() => {
     }
   }
 
+
+  function mostrarCarregamento(container, ativo, mensagem = "Carregando dados...") {
+    let indicador = container.querySelector("[data-carregamento]");
+    if (!indicador) {
+      indicador = document.createElement("p");
+      indicador.dataset.carregamento = "";
+      indicador.className = "alerta";
+      indicador.setAttribute("role", "status");
+      indicador.setAttribute("aria-live", "polite");
+      container.prepend(indicador);
+    }
+    indicador.textContent = mensagem;
+    indicador.hidden = !ativo;
+  }
+
   function limparAlerta(container) {
     const alvo = container.querySelector("[data-alerta]");
     if (alvo) alvo.hidden = true;
   }
 
-  return { escapeHtml, exibirErros, limparErros, mostrarAlerta, limparAlerta };
+  return { escapeHtml, exibirErros, limparErros, mostrarAlerta, limparAlerta, mostrarCarregamento };
 })();
