@@ -3,51 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/assets.css">
   <link rel="stylesheet" href="css/style.css">
   <title>Ferrum — Dashboard</title>
 </head>
 <body>
-<header>
-  <h1>Ferrum</h1>
-  <p>Sistema de Gestão de Ferramentas e Equipamentos</p>
-  <nav aria-label="Navegação principal">
-    <ul>
-      <li><a href="index.html" aria-current="page">Dashboard</a></li>
-      <li><a href="equipamentos.html">Equipamentos</a></li>
-      <li><a href="emprestimos.html">Empréstimos</a></li>
-      <li><a href="manutencoes.html">Manutenções</a></li>
-    </ul>
-  </nav>
-</header>
+<header class="topbar"><div class="wrap navbar">
+  <a class="wordmark" href="index.html" aria-label="Ferrum, página inicial"><span class="mark" aria-hidden="true"></span>Ferrum</a>
+  <nav aria-label="Navegação principal"><a href="index.html" aria-current="page"><i aria-hidden="true" class="icon i-grid-1x2"></i>Visão geral</a>
+<a href="equipamentos.html"><i aria-hidden="true" class="icon i-boxes"></i>Equipamentos</a>
+<a href="emprestimos.html"><i aria-hidden="true" class="icon i-arrow-left-right"></i>Empréstimos</a>
+<a href="manutencoes.html"><i aria-hidden="true" class="icon i-tools"></i>Manutenções</a></nav>
+</div></header>
 
-<main>
+<main class="wrap page-index">
   <p class="alerta" data-alerta hidden></p>
-  <h2>Visão geral</h2>
+  <div class="hero"><div class="hero-body"><p class="date" id="data-painel"></p><h1>Visão geral</h1>
+    <div class="hero-actions"><a class="button primary" href="equipamentos.html#cadastro-titulo"><i aria-hidden="true" class="icon i-plus-lg"></i>Novo equipamento</a>
+    <a class="button ghost" href="emprestimos.html#registrar-titulo">Registrar empréstimo<i aria-hidden="true" class="icon i-arrow-up-right"></i></a></div></div>
+    <div class="blueprint" aria-hidden="true"></div></div>
 
   <section aria-labelledby="resumo-titulo">
-    <h3 id="resumo-titulo">Resumo dos equipamentos</h3>
+    <h2 id="resumo-titulo">Resumo dos equipamentos</h2>
     <dl class="stats-grid">
       <div>
-        <dt>Total de equipamentos</dt>
+        <dt><i aria-hidden="true" class="icon i-box-seam"></i>Total de equipamentos</dt>
         <dd id="stat-total">—</dd>
       </div>
       <div>
-        <dt>Disponíveis</dt>
+        <dt><i aria-hidden="true" class="icon i-check2-circle"></i>Disponíveis</dt>
         <dd id="stat-disponiveis">—</dd>
       </div>
       <div>
-        <dt>Emprestados</dt>
+        <dt><i aria-hidden="true" class="icon i-arrow-left-right"></i>Emprestados</dt>
         <dd id="stat-emprestados">—</dd>
       </div>
       <div>
-        <dt>Em manutenção</dt>
+        <dt><i aria-hidden="true" class="icon i-wrench-adjustable"></i>Em manutenção</dt>
         <dd id="stat-manutencao">—</dd>
       </div>
     </dl>
   </section>
 
-  <section aria-labelledby="pendentes-titulo">
-    <h3 id="pendentes-titulo">Empréstimos pendentes</h3>
+  <div class="dashboard-columns"><section aria-labelledby="pendentes-titulo">
+    <h2 id="pendentes-titulo">Empréstimos pendentes</h2><a class="section-link" href="emprestimos.html" aria-label="Ver todos os empréstimos"><i aria-hidden="true" class="icon i-arrow-up-right"></i></a>
     <p id="pendentes-vazio" hidden>Não há empréstimos pendentes no momento.</p>
     <div class="table-responsive">
       <table>
@@ -67,10 +66,11 @@
   </section>
 
   <section aria-labelledby="movimentacoes-titulo">
-    <h3 id="movimentacoes-titulo">Movimentações recentes</h3>
+    <h2 id="movimentacoes-titulo">Movimentações recentes</h2>
     <ol id="lista-movimentacoes">
     </ol>
   </section>
+</div>
 </main>
 
 <footer>

@@ -3,29 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/assets.css">
   <link rel="stylesheet" href="css/style.css">
   <title>Ferrum — Empréstimos</title>
 </head>
 <body>
-<header>
-  <h1>Ferrum</h1>
-  <p>Sistema de Gestão de Ferramentas e Equipamentos</p>
-  <nav aria-label="Navegação principal">
-    <ul>
-      <li><a href="index.html">Dashboard</a></li>
-      <li><a href="equipamentos.html">Equipamentos</a></li>
-      <li><a href="emprestimos.html" aria-current="page">Empréstimos</a></li>
-      <li><a href="manutencoes.html">Manutenções</a></li>
-    </ul>
-  </nav>
-</header>
+<header class="topbar"><div class="wrap navbar">
+  <a class="wordmark" href="index.html" aria-label="Ferrum, página inicial"><span class="mark" aria-hidden="true"></span>Ferrum</a>
+  <nav aria-label="Navegação principal"><a href="index.html"><i aria-hidden="true" class="icon i-grid-1x2"></i>Visão geral</a>
+<a href="equipamentos.html"><i aria-hidden="true" class="icon i-boxes"></i>Equipamentos</a>
+<a href="emprestimos.html" aria-current="page"><i aria-hidden="true" class="icon i-arrow-left-right"></i>Empréstimos</a>
+<a href="manutencoes.html"><i aria-hidden="true" class="icon i-tools"></i>Manutenções</a></nav>
+</div></header>
 
-<main>
+<main class="wrap page-emprestimos">
   <p class="alerta" data-alerta hidden></p>
-  <h2>Empréstimos</h2>
+  <div class="page-head"><h1>Empréstimos</h1><a href="#registrar-titulo" class="button primary"><i aria-hidden="true" class="icon i-plus-lg"></i>Registrar empréstimo</a></div>
 
-  <section aria-labelledby="registrar-titulo">
-    <h3 id="registrar-titulo">Registrar empréstimo</h3>
+<section aria-labelledby="historico-titulo">
+    <h2 id="historico-titulo">Histórico de empréstimos</h2>
+    <div class="table-responsive">
+      <table>
+        <caption>Empréstimos registrados e sua situação</caption>
+        <thead>
+        <tr>
+          <th scope="col">Equipamento</th>
+          <th scope="col">Responsável</th>
+          <th scope="col">Data do empréstimo</th>
+          <th scope="col">Previsão de devolução</th>
+          <th scope="col">Situação</th>
+        </tr>
+        </thead>
+        <tbody id="tabela-emprestimos">
+        </tbody>
+      </table>
+    </div>
+  </section>
+<div class="form-columns"><section aria-labelledby="registrar-titulo">
+    <h2 id="registrar-titulo">Registrar empréstimo</h2>
     <p class="alerta" data-alerta hidden></p>
     <p id="sem-equipamentos-disponiveis" hidden>Não há equipamentos disponíveis para empréstimo no momento.</p>
     <form id="form-emprestimo" novalidate>
@@ -69,10 +84,8 @@
         <button type="reset">Limpar</button>
       </p>
     </form>
-  </section>
-
-  <section aria-labelledby="devolucao-titulo">
-    <h3 id="devolucao-titulo">Registrar devolução</h3>
+  </section><section aria-labelledby="devolucao-titulo">
+    <h2 id="devolucao-titulo">Registrar devolução</h2>
     <p class="alerta" data-alerta hidden></p>
     <p id="sem-emprestimos-abertos" hidden>Não há empréstimos em aberto para devolução no momento.</p>
     <form id="form-devolucao" novalidate>
@@ -98,27 +111,7 @@
         <button type="submit">Registrar devolução</button>
       </p>
     </form>
-  </section>
-
-  <section aria-labelledby="historico-titulo">
-    <h3 id="historico-titulo">Histórico de empréstimos</h3>
-    <div class="table-responsive">
-      <table>
-        <caption>Empréstimos registrados e sua situação</caption>
-        <thead>
-        <tr>
-          <th scope="col">Equipamento</th>
-          <th scope="col">Responsável</th>
-          <th scope="col">Data do empréstimo</th>
-          <th scope="col">Previsão de devolução</th>
-          <th scope="col">Situação</th>
-        </tr>
-        </thead>
-        <tbody id="tabela-emprestimos">
-        </tbody>
-      </table>
-    </div>
-  </section>
+  </section></div>
 </main>
 
 <footer>

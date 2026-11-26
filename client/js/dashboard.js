@@ -8,6 +8,9 @@ import { consultarResumo } from "./services/dashboard-service.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const main = document.querySelector("main");
+  document.getElementById("data-painel").textContent = new Intl.DateTimeFormat("pt-BR", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric"
+  }).format(new Date());
   FerrumUI.mostrarCarregamento(main, true);
   try {
     const resumo = await consultarResumo();
@@ -69,7 +72,12 @@ function renderMovimentacoes(movimentacoes) {
   }
   movimentacoes.forEach((mov) => {
     const item = document.createElement("li");
-    item.textContent = `${mov.texto} — ${formato.formatarDataHora(mov.ts)}`;
+    const descricao = document.createElement("span");
+    descricao.textContent = mov.texto;
+    const instante = document.createElement("time");
+    instante.dateTime = mov.ts;
+    instante.textContent = formato.formatarDataHora(mov.ts);
+    item.append(descricao, instante);
     lista.appendChild(item);
   });
 }
