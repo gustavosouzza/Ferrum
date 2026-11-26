@@ -1,8 +1,8 @@
 /**
- * emprestimos.js — Etapa 05
+ * emprestimos.js
  * Registro e consulta assíncrona de empréstimos e devoluções.
  */
-import { FerrumStore } from "./store.js";
+import * as formato from "./formatacao.js";
 import { FerrumUI } from "./ui.js";
 import { listarEquipamentos } from "./services/equipamento-service.js";
 import {
@@ -11,7 +11,6 @@ import {
 } from "./services/emprestimo-service.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const db = FerrumStore.load();
   const main = document.querySelector("main");
   const formEmprestimo = document.getElementById("form-emprestimo");
   const formDevolucao = document.getElementById("form-devolucao");
@@ -22,9 +21,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     FerrumUI.mostrarCarregamento(main, true, "Consultando empréstimos...");
     try {
       const [equipamentos, abertos, historico] = await Promise.all([
-        listarEquipamentos(db, { situacao: "disponivel" }),
-        listarEmprestimosAbertos(db),
-        listarEmprestimos(db)
+        listarEquipamentos({ situacao: "disponivel" }),
+        listarEmprestimosAbertos(),
+        listarEmprestimos()
       ]);
       selectEquipamento.innerHTML = '<option value="">Selecione um equipamento disponível</option>';
       equipamentos.forEach((equip) => {
@@ -40,11 +39,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       selectEmprestimo.innerHTML = '<option value="">Selecione um empréstimo em aberto</option>';
       abertos.forEach((emprestimo) => {
-        const equip = equipamentos.find((e) => e.id === emprestimo.equipamentoId) ||
-          db.equipamentos.find((e) => e.id === emprestimo.equipamentoId);
         const option = document.createElement("option");
         option.value = emprestimo.id;
-        option.textContent = `${equip ? equip.nome : "—"} — ${emprestimo.responsavel}`;
+        option.textContent = `${emprestimo.equipamentoNome} — ${emprestimo.responsavel}`;
         selectEmprestimo.appendChild(option);
       });
       const semAbertos = abertos.length === 0;
@@ -60,18 +57,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function renderHistorico(historico = null) {
-    const dados = historico || await listarEmprestimos(db);
+    const dados = historico || await listarEmprestimos();
     const corpo = document.getElementById("tabela-emprestimos");
     corpo.innerHTML = "";
     for (const emprestimo of dados) {
-      const equipamento = db.equipamentos.find((e) => e.id === emprestimo.equipamentoId);
       const linha = document.createElement("tr");
       const aberto = emprestimo.situacao === "aberto";
       linha.innerHTML = `
-        <td data-label="Equipamento">${FerrumUI.escapeHtml(equipamento ? equipamento.nome : "Equipamento removido")}</td>
+        <td data-label="Equipamento">${FerrumUI.escapeHtml(emprestimo.equipamentoNome)}</td>
         <td data-label="Responsável">${FerrumUI.escapeHtml(emprestimo.responsavel)}</td>
-        <td data-label="Data do empréstimo">${FerrumStore.formatarData(emprestimo.dataEmprestimo)}</td>
-        <td data-label="Previsão de devolução">${FerrumStore.formatarData(emprestimo.previsaoDevolucao)}</td>
+        <td data-label="Data do empréstimo">${formato.formatarData(emprestimo.dataEmprestimo)}</td>
+        <td data-label="Previsão de devolução">${formato.formatarData(emprestimo.previsaoDevolucao)}</td>
         <td data-label="Situação"><span class="etiqueta etiqueta-${aberto ? "emprestado" : "disponivel"}">${aberto ? "Em aberto" : "Devolvido"}</span></td>`;
       corpo.appendChild(linha);
     }
@@ -88,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     FerrumUI.mostrarCarregamento(main, true, "Enviando registro de empréstimo...");
     try {
-      const resultado = await registrarEmprestimo(db, dados);
+      const resultado = await registrarEmprestimo(dados);
       if (!resultado.ok) { FerrumUI.exibirErros(formEmprestimo, resultado.erros); return; }
       FerrumUI.limparErros(formEmprestimo);
       formEmprestimo.reset();
@@ -107,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     FerrumUI.mostrarCarregamento(main, true, "Enviando registro de devolução...");
     try {
-      const resultado = await registrarDevolucao(db, dados);
+      const resultado = await registrarDevolucao(dados);
       if (!resultado.ok) { FerrumUI.exibirErros(formDevolucao, resultado.erros); return; }
       FerrumUI.limparErros(formDevolucao);
       formDevolucao.reset();

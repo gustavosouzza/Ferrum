@@ -1,0 +1,91 @@
+{
+  "info": {
+    "name": "Ferrum — CRUD de equipamentos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000/api"
+    },
+    {
+      "key": "equipamentoId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Listar",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/equipamentos"
+      }
+    },
+    {
+      "name": "Cadastrar",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/equipamentos",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nome\": \"Alicate\", \"identificacao\": \"AL-POSTMAN\", \"categoria\": \"ferramenta-manual\"}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) pm.collectionVariables.set(\"equipamentoId\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/equipamentos/{{equipamentoId}}"
+      }
+    },
+    {
+      "name": "Editar",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/equipamentos/{{equipamentoId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nome\": \"Alicate revisado\", \"identificacao\": \"AL-POSTMAN\", \"categoria\": \"ferramenta-manual\"}"
+        }
+      }
+    },
+    {
+      "name": "Excluir",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/equipamentos/{{equipamentoId}}"
+      }
+    },
+    {
+      "name": "Conferir exclusão",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/equipamentos/{{equipamentoId}}"
+      }
+    }
+  ]
+}

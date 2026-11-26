@@ -1,8 +1,8 @@
 /**
- * equipamentos.js — Etapa 05
+ * equipamentos.js
  * Tela de cadastro, edição, exclusão e consulta assíncrona de equipamentos.
  */
-import { FerrumStore } from "./store.js";
+import * as formato from "./formatacao.js";
 import { FerrumUI } from "./ui.js";
 import {
   listarEquipamentos, buscarEquipamento, adicionarEquipamento,
@@ -10,7 +10,6 @@ import {
 } from "./services/equipamento-service.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const db = FerrumStore.load();
   const main = document.querySelector("main");
   const form = document.getElementById("form-equipamento");
   const filtro = document.getElementById("form-filtro-equipamentos");
@@ -28,8 +27,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mostrarManutencao = cadastrando && situacao.value === "manutencao";
     document.getElementById("campos-emprestimo").hidden = !mostrarEmprestimo;
     document.getElementById("campos-manutencao").hidden = !mostrarManutencao;
-    if (mostrarEmprestimo && !document.getElementById("emp-data").value) document.getElementById("emp-data").value = FerrumStore.hojeISO();
-    if (mostrarManutencao && !document.getElementById("man-data").value) document.getElementById("man-data").value = FerrumStore.hojeISO();
+    if (mostrarEmprestimo && !document.getElementById("emp-data").value) document.getElementById("emp-data").value = formato.hojeISO();
+    if (mostrarManutencao && !document.getElementById("man-data").value) document.getElementById("man-data").value = formato.hojeISO();
   }
 
   async function renderTabela() {
@@ -39,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         categoria: filtro.elements["filtro-categoria"].value,
         situacao: filtro.elements["filtro-situacao"].value
       };
-      const lista = await listarEquipamentos(db, filtros);
+      const lista = await listarEquipamentos(filtros);
       const corpo = document.getElementById("tabela-equipamentos");
       const vazio = document.getElementById("lista-vazia");
       corpo.innerHTML = "";
@@ -59,8 +58,8 @@ document.addEventListener("DOMContentLoaded", async () => {
               ${podeExcluir ? "" : `<small class="dica-campo">Não pode ser excluído: ${equipamento.situacao === "emprestado" ? "emprestado" : "em manutenção"}.</small>`}`;
         linha.innerHTML = `
           <td data-label="Nome">${FerrumUI.escapeHtml(equipamento.nome)}</td>
-          <td data-label="Categoria">${FerrumUI.escapeHtml(FerrumStore.CATEGORIAS[equipamento.categoria] || equipamento.categoria)}</td>
-          <td data-label="Situação"><span class="etiqueta etiqueta-${equipamento.situacao}">${FerrumUI.escapeHtml(FerrumStore.SITUACOES_EQUIPAMENTO[equipamento.situacao])}</span></td>
+          <td data-label="Categoria">${FerrumUI.escapeHtml(formato.CATEGORIAS[equipamento.categoria] || equipamento.categoria)}</td>
+          <td data-label="Situação"><span class="etiqueta etiqueta-${equipamento.situacao}">${FerrumUI.escapeHtml(formato.SITUACOES_EQUIPAMENTO[equipamento.situacao])}</span></td>
           <td data-label="Ações">${acoes}</td>`;
         corpo.appendChild(linha);
       });
@@ -84,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function entrarNoModoEdicao(id) {
     try {
-      const equipamento = await buscarEquipamento(db, id);
+      const equipamento = await buscarEquipamento(id);
       if (!equipamento) return;
       confirmandoExclusaoId = null;
       form.elements.equipamentoId.value = equipamento.id;
@@ -129,8 +128,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     FerrumUI.mostrarCarregamento(main, true, "Enviando dados do equipamento...");
     try {
       const resultado = id
-        ? await editarEquipamento(db, Number(id), dados)
-        : await adicionarEquipamento(db, dados);
+        ? await editarEquipamento(Number(id), dados)
+        : await adicionarEquipamento(dados);
       if (!resultado.ok) {
         FerrumUI.exibirErros(form, resultado.erros || { geral: resultado.mensagem });
         return;
@@ -166,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (acao === "confirmar-excluir") {
       FerrumUI.mostrarCarregamento(main, true, "Enviando solicitação de exclusão...");
       try {
-        const resultado = await excluirEquipamento(db, id);
+        const resultado = await excluirEquipamento(id);
         FerrumUI.mostrarAlerta(secaoLista, resultado.ok ? "Equipamento excluído com sucesso." : resultado.mensagem, resultado.ok ? "sucesso" : "erro");
       } catch (erro) {
         FerrumUI.mostrarAlerta(secaoLista, erro.message, "erro");

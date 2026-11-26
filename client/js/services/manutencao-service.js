@@ -1,11 +1,17 @@
 import { requisicao } from "../api/ferrum-api.js";
-import { FerrumStore } from "../store.js";
 
-export const listarManutencoes = (db) =>
-  requisicao(() => FerrumStore.listarManutencoes(db));
-export const listarManutencoesAbertas = (db) =>
-  requisicao(() => FerrumStore.listarManutencoesAbertas(db));
-export const registrarManutencao = (db, dados) =>
-  requisicao(() => FerrumStore.registrarManutencao(db, dados));
-export const concluirManutencao = (db, dados) =>
-  requisicao(() => FerrumStore.concluirManutencao(db, dados));
+export function listarManutencoes() {
+  return requisicao("manutencoes");
+}
+
+export function listarManutencoesAbertas() {
+  return requisicao("manutencoes?situacao=em-andamento");
+}
+
+export function registrarManutencao(dados) {
+  return requisicao("manutencoes", "POST", dados);
+}
+
+export function concluirManutencao(dados) {
+  return requisicao(`manutencoes/${dados.manutencaoId}/conclusao`, "PATCH", dados);
+}

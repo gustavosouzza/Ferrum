@@ -31,9 +31,5 @@ playwright-report/
 test-results/
 TESTES-AUTOMATIZADOS.md
 
-# Configurações exclusivas dos testes
-package.json
-package-lock.json
-
 # Arquivos locais
 .env

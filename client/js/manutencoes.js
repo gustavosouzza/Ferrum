@@ -1,8 +1,8 @@
 /**
- * manutencoes.js — Etapa 05
+ * manutencoes.js
  * Registro e consulta assíncrona de manutenções.
  */
-import { FerrumStore } from "./store.js";
+import * as formato from "./formatacao.js";
 import { FerrumUI } from "./ui.js";
 import { listarEquipamentos } from "./services/equipamento-service.js";
 import {
@@ -11,7 +11,6 @@ import {
 } from "./services/manutencao-service.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const db = FerrumStore.load();
   const main = document.querySelector("main");
   const formManutencao = document.getElementById("form-manutencao");
   const formConcluir = document.getElementById("form-concluir-manutencao");
@@ -22,9 +21,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     FerrumUI.mostrarCarregamento(main, true, "Consultando manutenções...");
     try {
       const [equipamentos, abertas, historico] = await Promise.all([
-        listarEquipamentos(db, { situacao: "disponivel" }),
-        listarManutencoesAbertas(db),
-        listarManutencoes(db)
+        listarEquipamentos({ situacao: "disponivel" }),
+        listarManutencoesAbertas(),
+        listarManutencoes()
       ]);
       selectEquipamento.innerHTML = '<option value="">Selecione um equipamento</option>';
       equipamentos.forEach((equip) => {
@@ -40,10 +39,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       selectManutencao.innerHTML = '<option value="">Selecione uma manutenção</option>';
       abertas.forEach((manutencao) => {
-        const equip = db.equipamentos.find((e) => e.id === manutencao.equipamentoId);
         const option = document.createElement("option");
         option.value = manutencao.id;
-        option.textContent = `${equip ? equip.nome : "—"} — iniciada em ${FerrumStore.formatarData(manutencao.dataInicio)}`;
+        option.textContent = `${manutencao.equipamentoNome} — iniciada em ${formato.formatarData(manutencao.dataInicio)}`;
         selectManutencao.appendChild(option);
       });
       const semAbertas = abertas.length === 0;
@@ -60,14 +58,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const corpo = document.getElementById("tabela-manutencoes");
     corpo.innerHTML = "";
     historico.forEach((manutencao) => {
-      const equipamento = db.equipamentos.find((e) => e.id === manutencao.equipamentoId);
       const emAndamento = manutencao.situacao === "em-andamento";
       const linha = document.createElement("tr");
       linha.innerHTML = `
-        <td data-label="Equipamento">${FerrumUI.escapeHtml(equipamento ? equipamento.nome : "Equipamento removido")}</td>
+        <td data-label="Equipamento">${FerrumUI.escapeHtml(manutencao.equipamentoNome)}</td>
         <td data-label="Descrição">${FerrumUI.escapeHtml(manutencao.descricao)}</td>
-        <td data-label="Data de início">${FerrumStore.formatarData(manutencao.dataInicio)}</td>
-        <td data-label="Data de conclusão">${FerrumStore.formatarData(manutencao.dataConclusao)}</td>
+        <td data-label="Data de início">${formato.formatarData(manutencao.dataInicio)}</td>
+        <td data-label="Data de conclusão">${formato.formatarData(manutencao.dataConclusao)}</td>
         <td data-label="Situação"><span class="etiqueta etiqueta-${emAndamento ? "manutencao" : "disponivel"}">${emAndamento ? "Em andamento" : "Concluída"}</span></td>`;
       corpo.appendChild(linha);
     });
@@ -84,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     FerrumUI.mostrarCarregamento(main, true, "Enviando registro de manutenção...");
     try {
-      const resultado = await registrarManutencao(db, dados);
+      const resultado = await registrarManutencao(dados);
       if (!resultado.ok) { FerrumUI.exibirErros(formManutencao, resultado.erros); return; }
       FerrumUI.limparErros(formManutencao);
       formManutencao.reset();
@@ -103,7 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
     FerrumUI.mostrarCarregamento(main, true, "Enviando conclusão da manutenção...");
     try {
-      const resultado = await concluirManutencao(db, dados);
+      const resultado = await concluirManutencao(dados);
       if (!resultado.ok) { FerrumUI.exibirErros(formConcluir, resultado.erros); return; }
       FerrumUI.limparErros(formConcluir);
       formConcluir.reset();

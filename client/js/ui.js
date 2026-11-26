@@ -18,7 +18,7 @@ export const FerrumUI = (() => {
   /**
    * Localiza o campo (input/select/textarea) associado a um elemento de
    * erro. Em vez de buscar por `name` — os nomes das chaves de erro
-   * retornadas por store.js (ex.: "dataEmprestimo") nem sempre coincidem
+   * retornadas pela API (ex.: "dataEmprestimo") nem sempre coincidem
    * com o atributo `name` do HTML (ex.: "data-emprestimo") — a busca é
    * feita pela proximidade no DOM: o campo é o input/select/textarea mais
    * próximo dentro do mesmo <p> (ou, na falta de um, do mesmo <fieldset>)

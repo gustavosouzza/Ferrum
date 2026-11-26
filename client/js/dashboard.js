@@ -1,8 +1,8 @@
 /**
- * dashboard.js — Etapa 05
+ * dashboard.js
  * Consulta assíncrona dos indicadores, empréstimos pendentes e movimentações.
  */
-import { FerrumStore } from "./store.js";
+import * as formato from "./formatacao.js";
 import { FerrumUI } from "./ui.js";
 import { consultarResumo } from "./services/dashboard-service.js";
 
@@ -10,8 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const main = document.querySelector("main");
   FerrumUI.mostrarCarregamento(main, true);
   try {
-    const db = FerrumStore.load();
-    const resumo = await consultarResumo(db);
+    const resumo = await consultarResumo();
     renderEstatisticas(resumo.stats);
     renderPendentes(resumo);
     renderMovimentacoes(resumo.movimentacoes);
@@ -51,8 +50,8 @@ function renderPendentes(resumo) {
     linha.innerHTML = `
       <td data-label="Equipamento">${FerrumUI.escapeHtml(equipamento ? equipamento.nome : "—")}</td>
       <td data-label="Responsável">${FerrumUI.escapeHtml(emprestimo.responsavel)}</td>
-      <td data-label="Data do empréstimo">${FerrumStore.formatarData(emprestimo.dataEmprestimo)}</td>
-      <td data-label="Previsão de devolução">${FerrumStore.formatarData(emprestimo.previsaoDevolucao)}
+      <td data-label="Data do empréstimo">${formato.formatarData(emprestimo.dataEmprestimo)}</td>
+      <td data-label="Previsão de devolução">${formato.formatarData(emprestimo.previsaoDevolucao)}
         ${atrasado ? '<span class="etiqueta etiqueta-atraso">Atrasado</span>' : ""}
       </td>`;
     corpo.appendChild(linha);
@@ -70,7 +69,7 @@ function renderMovimentacoes(movimentacoes) {
   }
   movimentacoes.forEach((mov) => {
     const item = document.createElement("li");
-    item.textContent = `${mov.texto} — ${FerrumStore.formatarDataHora(mov.ts)}`;
+    item.textContent = `${mov.texto} — ${formato.formatarDataHora(mov.ts)}`;
     lista.appendChild(item);
   });
 }

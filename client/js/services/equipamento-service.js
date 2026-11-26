@@ -1,13 +1,21 @@
 import { requisicao } from "../api/ferrum-api.js";
-import { FerrumStore } from "../store.js";
 
-export const listarEquipamentos = (db, filtros = {}) =>
-  requisicao(() => FerrumStore.listarEquipamentos(db, filtros));
-export const buscarEquipamento = (db, id) =>
-  requisicao(() => FerrumStore.buscarEquipamento(db, id));
-export const adicionarEquipamento = (db, dados) =>
-  requisicao(() => FerrumStore.adicionarEquipamento(db, dados));
-export const editarEquipamento = (db, id, dados) =>
-  requisicao(() => FerrumStore.editarEquipamento(db, id, dados));
-export const excluirEquipamento = (db, id) =>
-  requisicao(() => FerrumStore.excluirEquipamento(db, id));
+export function listarEquipamentos(filtros = {}) {
+  return requisicao("equipamentos?" + new URLSearchParams(filtros));
+}
+
+export function buscarEquipamento(id) {
+  return requisicao(`equipamentos/${id}`);
+}
+
+export function adicionarEquipamento(dados) {
+  return requisicao("equipamentos", "POST", dados);
+}
+
+export function editarEquipamento(id, dados) {
+  return requisicao(`equipamentos/${id}`, "PUT", dados);
+}
+
+export function excluirEquipamento(id) {
+  return requisicao(`equipamentos/${id}`, "DELETE");
+}
